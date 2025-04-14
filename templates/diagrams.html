@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Diagram Editor - {{ draft.title }}{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/diagrams.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h1>Diagram Editor: {{ draft.title }}</h1>
+        <div class="btn-group" role="group">
+            <a href="/editor/{{ draft.id }}" class="btn btn-outline-primary">Back to Editor</a>
+            <a href="/preview/{{ draft.id }}" class="btn btn-success">Preview Grant</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h5>Diagram Tools</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="diagram-type" class="form-label">Diagram Type</label>
+                    <select class="form-select" id="diagram-type">
+                        <option value="flowchart">Flowchart</option>
+                        <option value="sequence">Sequence Diagram</option>
+                        <option value="classDiagram">Class Diagram</option>
+                        <option value="mindmap">Mind Map</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="diagram-title" class="form-label">Diagram Title</label>
+                    <input type="text" class="form-control" id="diagram-title" placeholder="Enter diagram title">
+                </div>
+                <button id="new-diagram-btn" class="btn btn-primary">Create New Diagram</button>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Your Diagrams</h5>
+            </div>
+            <div class="card-body">
+                <div id="diagram-list" class="list-group">
+                    {% if draft.diagrams %}
+                        {% for diagram in draft.diagrams %}
+                            <a href="#" class="list-group-item list-group-item-action diagram-item" data-diagram-id="{{ diagram.id }}">
+                                {{ diagram.title }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No diagrams yet. Create your first diagram!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 id="current-diagram-title">New Diagram</h3>
+                <div>
+                    <button id="save-diagram-btn" class="btn btn-primary">Save Diagram</button>
+                    <button id="preview-diagram-btn" class="btn btn-secondary ms-2">Preview</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="diagram-code" class="form-label">Diagram Code</label>
+                    <textarea class="form-control" id="diagram-code" rows="10" placeholder="Enter your diagram code here..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Diagram Preview</label>
+                    <div id="diagram-preview" class="border p-3 bg-light"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Diagram Templates -->
+<div id="diagram-templates" style="display: none;">
+    <div id="template-flowchart">graph TD;
+    A[Start] --> B[Process];
+    B --> C[Decision];
+    C -->|Yes| D[End];
+    C -->|No| B;</div>
+    
+    <div id="template-sequence">sequenceDiagram
+    participant A as User
+    participant B as System
+    A->>B: Request Data
+    B->>A: Return Data</div>
+    
+    <div id="template-classDiagram">classDiagram
+    class Animal {
+        +String name
+        +makeSound()
+    }
+    class Dog {
+        +fetch()
+    }
+    Animal <|-- Dog</div>
+    
+    <div id="template-mindmap">mindmap
+    root((Main Idea))
+        Topic 1
+            Subtopic 1.1
+            Subtopic 1.2
+        Topic 2
+            Subtopic 2.1
+            Subtopic 2.2</div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewModalLabel">Diagram Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-preview-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.min.js"></script>
+<script>
+    // Store draft data
+    const draftId = "{{ draft.id }}";
+    const draftDiagrams = {{ draft.diagrams|tojson if draft.diagrams else [] }};
+    
+    // Current diagram being edited
+    let currentDiagramId = null;
+    
+    // Initialize Mermaid
+    mermaid.initialize({ startOnLoad: true });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up diagram type change
+        const diagramType = document.getElementById('diagram-type');
+        diagramType.addEventListener('change', function() {
+            loadDiagramTemplate(this.value);
+        });
+        
+        // Set up new diagram button
+        const newDiagramBtn = document.getElementById('new-diagram-btn');
+        newDiagramBtn.addEventListener('click', function() {
+            createNewDiagram();
+        });
+        
+        // Set up save button
+        const saveDiagramBtn = document.getElementById('save-diagram-btn');
+        saveDiagramBtn.addEventListener('click', function() {
+            saveDiagram();
+        });
+        
+        // Set up preview button
+        const previewDiagramBtn = document.getElementById('preview-diagram-btn');
+        previewDiagramBtn.addEventListener('click', function() {
+            previewDiagram();
+        });
+        
+        // Set up diagram list items
+        const diagramItems = document.querySelectorAll('.diagram-item');
+        diagramItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const diagramId = this.getAttribute('data-diagram-id');
+                loadDiagram(diagramId);
+            });
+        });
+        
+        // Load initial template
+        loadDiagramTemplate(diagramType.value);
+    });
+    
+    function loadDiagramTemplate(type) {
+        const templateId = `template-${type}`;
+        const template = document.getElementById(templateId);
+        
+        if (template) {
+            document.getElementById('diagram-code').value = template.textContent;
+            renderDiagramPreview();
+        }
+    }
+    
+    function createNewDiagram() {
+        // Reset current diagram
+        currentDiagramId = null;
+        
+        // Set title
+        const title = document.getElementById('diagram-title').value || 'New Diagram';
+        document.getElementById('current-diagram-title').textContent = title;
+        
+        // Load template for selected type
+        const type = document.getElementById('diagram-type').value;
+        loadDiagramTemplate(type);
+    }
+    
+    function loadDiagram(diagramId) {
+        const diagram = draftDiagrams.find(d => d.id === diagramId);
+        if (!diagram) return;
+        
+        // Set current diagram
+        currentDiagramId = diagramId;
+        
+        // Update UI
+        document.getElementById('current-diagram-title').textContent = diagram.title;
+        document.getElementById('diagram-title').value = diagram.title;
+        document.getElementById('diagram-type').value = diagram.type;
+        document.getElementById('diagram-code').value = diagram.content;
+        
+        // Update active item in list
+        document.querySelectorAll('.diagram-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('data-diagram-id') === diagramId) {
+                item.classList.add('active');
+            }
+        });
+        
+        // Render preview
+        renderDiagramPreview();
+    }
+    
+    function saveDiagram() {
+        const title = document.getElementById('diagram-title').value || 'Untitled Diagram';
+        const type = document.getElementById('diagram-type').value;
+        const content = document.getElementById('diagram-code').value;
+        
+        // Prepare diagram data
+        const diagramData = {
+            title: title,
+            type: type,
+            content: content
+        };
+        
+        // Save to server
+        fetch('/api/save-diagram', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                draft_id: draftId,
+                diagram_id: currentDiagramId,
+                diagram: diagramData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Diagram saved successfully!');
+                
+                // Update current diagram ID if this was a new diagram
+                if (!currentDiagramId) {
+                    currentDiagramId = data.diagram_id;
+                }
+                
+                // Refresh the page to update the diagram list
+                window.location.reload();
+            } else {
+                alert('Error saving diagram: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving diagram. Please try again.');
+        });
+    }
+    
+    function renderDiagramPreview() {
+        const code = document.getElementById('diagram-code').value;
+        const previewContainer = document.getElementById('diagram-preview');
+        
+        // Clear previous content
+        previewContainer.innerHTML = '';
+        
+        // Create mermaid div
+        const mermaidDiv = document.createElement('div');
+        mermaidDiv.className = 'mermaid';
+        mermaidDiv.textContent = code;
+        previewContainer.appendChild(mermaidDiv);
+        
+        // Render diagram
+        try {
+            mermaid.init(undefined, mermaidDiv);
+        } catch (error) {
+            console.error('Mermaid error:', error);
+            previewContainer.innerHTML = `<div class="alert alert-danger">Error rendering diagram: ${error.message}</div>`;
+        }
+    }
+    
+    function previewDiagram() {
+        const code = document.getElementById('diagram-code').value;
+        const title = document.getElementById('diagram-title').value || 'Diagram Preview';
+        
+        // Set modal title
+        document.getElementById('previewModalLabel').textContent = title;
+        
+        // Set diagram content
+        const previewContainer = document.getElementById('modal-preview-container');
+        previewContainer.innerHTML = '';
+        
+        // Create mermaid div
+        const mermaidDiv = document.createElement('div');
+        mermaidDiv.className = 'mermaid';
+        mermaidDiv.textContent = code;
+        previewContainer.appendChild(mermaidDiv);
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('previewModal'));
+        modal.show();
+        
+        // Render diagram after modal is shown
+        setTimeout(() => {
+            try {
+                mermaid.init(undefined, mermaidDiv);
+            } catch (error) {
+                console.error('Mermaid error:', error);
+                previewContainer.innerHTML = `<div class="alert alert-danger">Error rendering diagram: ${error.message}</div>`;
+            }
+        }, 500);
+    }
+</script>
+{% endblock %}

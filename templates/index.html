@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Grant Writing Assistant - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Welcome to Grant Writing Assistant</h1>
+            <p class="lead">Create professional grant proposals with AI-powered assistance.</p>
+            <hr class="my-4">
+            <p>Choose from predefined templates or upload your own format to get started.</p>
+            <a class="btn btn-primary btn-lg" href="/new-grant" role="button">Create New Grant</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2>Your Drafts</h2>
+        {% if drafts %}
+            <div class="list-group mt-3">
+                {% for draft in drafts %}
+                    <a href="/editor/{{ draft.id }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ draft.title }}</h5>
+                            <small>{{ draft.updated_at }}</small>
+                        </div>
+                        <p class="mb-1">Template: {{ draft.template_id }}</p>
+                        <small>Sections: {{ draft.sections|length }}</small>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No drafts yet. <a href="/new-grant">Create your first grant proposal</a>.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2>Available Templates</h2>
+        <div class="row mt-3">
+            {% for template in templates %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ template.name }}</h5>
+                            <p class="card-text">{{ template.description }}</p>
+                            <p class="card-text"><small class="text-muted">{{ template.sections|length }} sections</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <form action="/new-grant" method="post">
+                                <input type="hidden" name="template_id" value="{{ template.id }}">
+                                <button type="submit" class="btn btn-outline-primary">Use Template</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

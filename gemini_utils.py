@@ -1,0 +1,198 @@
+import os
+import json
+import google.generativeai as genai
+from config import GEMINI_API_KEY
+
+# Configure the Gemini API
+genai.configure(api_key=GEMINI_API_KEY)
+
+def extract_sections_from_custom(content):
+    """
+    Use Gemini to extract sections and questions from a custom uploaded template
+    """
+    model = genai.GenerativeModel('gemini-pro')
+    
+    prompt = f"""
+    You are a grant writing assistant. I'm going to provide you with a custom grant template.
+    Please analyze it and extract the main sections and potential questions that need to be answered for each section.
+    
+    Format your response as a JSON array of sections, where each section has:
+    - id: a unique string identifier
+    - title: the section title
+    - description: a brief description of the section
+    - questions: an array of question objects, each with:
+      - id: a unique string identifier
+      - text: the question text
+      - type: either "text" for short answers or "textarea" for longer responses
+    
+    Here is the template content:
+    
+    {content}
+    
+    Return ONLY the JSON array, nothing else.
+    """
+    
+    response = model.generate_content(prompt)
+    
+    try:
+        # Parse the response as JSON
+        sections = json.loads(response.text)
+        return sections
+    except json.JSONDecodeError:
+        # If parsing fails, return a default section structure
+        import uuid
+        return [
+            {
+                'id': str(uuid.uuid4()),
+                'title': 'Custom Section',
+                'description': 'Section extracted from custom template',
+                'questions': [
+                    {
+                        'id': str(uuid.uuid4()),
+                        'text': 'Please provide content for this section',
+                        'type': 'textarea'
+                    }
+                ]
+            }
+        ]
+
+def generate_grant_content(draft, template):
+    """
+    Generate the full grant content using Gemini
+    """
+    model = genai.GenerativeModel('gemini-pro')
+    
+    # Prepare the context for Gemini
+    context = {
+        'template_name': template['name'],
+        'template_description': template['description'],
+        'sections': []
+    }
+    
+    for section in draft['sections']:
+        section_data = {
+            'title': section['title'],
+            'description': section['description'],
+            'questions': []
+        }
+        
+        for question in section.get('questions', []):
+            question_id = question['id']
+            answer = draft['answers'].get(question_id, '')
+            
+            section_data['questions'].append({
+                'text': question['text'],
+                'answer': answer
+            })
+        
+        context['sections'].append(section_data)
+    
+    # Add diagrams if available
+    diagrams_context = []
+    for diagram in draft.get('diagrams', []):
+        diagrams_context.append({
+            'title': diagram['title'],
+            'type': diagram['type'],
+            'description': f"Figure: {diagram['title']}"
+        })
+    
+    context['diagrams'] = diagrams_context
+    
+    # Create the prompt for Gemini
+    prompt = f"""
+    You are a professional grant writer. I'm going to provide you with information about a grant proposal,
+    including the template type, sections, questions, and the user's answers.
+    
+    Your task is to generate a complete, well-formatted grant proposal based on this information.
+    The proposal should be professional, persuasive, and follow best practices for grant writing.
+    
+    For each section, use the user's answers to craft compelling content. Expand on their points,
+    add appropriate transitions, and ensure the narrative flows well throughout the document.
+    
+    Here is the information:
+    
+    Template: {context['template_name']} - {context['template_description']}
+    
+    Sections:
+    """
+    
+    for section in context['sections']:
+        prompt += f"\n\n## {section['title']}\n{section['description']}\n"
+        
+        for question in section['questions']:
+            prompt += f"\nQuestion: {question['text']}\nAnswer: {question['answer']}\n"
+    
+    if diagrams_context:
+        prompt += "\n\nDiagrams to reference:\n"
+        for diagram in diagrams_context:
+            prompt += f"\n- {diagram['title']} ({diagram['type']}): {diagram['description']}\n"
+    
+    prompt += """
+    
+    Please generate a complete grant proposal with the following guidelines:
+    1. Format each section with proper headings and subheadings
+    2. Maintain a professional, persuasive tone throughout
+    3. Expand on the user's answers to create comprehensive content
+    4. Reference the diagrams where appropriate as figures
+    5. Use markdown formatting for the output
+    
+    Generate the complete grant proposal now:
+    """
+    
+    response = model.generate_content(prompt)
+    return response.text
+
+def generate_section_content(section, answers):
+    """
+    Generate content for a specific section using Gemini
+    """
+    model = genai.GenerativeModel('gemini-pro')
+    
+    # Prepare the context for this section
+    section_context = {
+        'title': section['title'],
+        'description': section['description'],
+        'questions': []
+    }
+    
+    for question in section.get('questions', []):
+        question_id = question['id']
+        answer = answers.get(question_id, '')
+        
+        section_context['questions'].append({
+            'text': question['text'],
+            'answer': answer
+        })
+    
+    # Create the prompt for Gemini
+    prompt = f"""
+    You are a professional grant writer. I'm going to provide you with information about a section of a grant proposal,
+    including the section title, description, questions, and the user's answers.
+    
+    Your task is to generate well-written content for this section based on the information provided.
+    The content should be professional, persuasive, and follow best practices for grant writing.
+    
+    Here is the information:
+    
+    Section: {section_context['title']}
+    Description: {section_context['description']}
+    
+    Questions and Answers:
+    """
+    
+    for question in section_context['questions']:
+        prompt += f"\nQuestion: {question['text']}\nAnswer: {question['answer']}\n"
+    
+    prompt += """
+    
+    Please generate content for this section with the following guidelines:
+    1. Format with proper headings and subheadings as needed
+    2. Maintain a professional, persuasive tone
+    3. Expand on the user's answers to create comprehensive content
+    4. Use markdown formatting for the output
+    
+    Generate the section content now:
+    """
+    
+    response = model.generate_content(prompt)
+    return response.text

@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Grant Editor - {{ draft.title }}{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/editor.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.snow.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h1>{{ draft.title }}</h1>
+        <div class="btn-group" role="group">
+            <a href="/diagrams/{{ draft.id }}" class="btn btn-outline-primary">Diagrams</a>
+            <a href="/preview/{{ draft.id }}" class="btn btn-success">Preview</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="list-group" id="section-list">
+            {% for section in draft.sections %}
+                <a href="#section-{{ section.id }}" class="list-group-item list-group-item-action" data-section-id="{{ section.id }}">
+                    {{ section.title }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4">
+            <h5>Diagrams</h5>
+            {% if draft.diagrams %}
+                <div class="list-group">
+                    {% for diagram in draft.diagrams %}
+                        <a href="#" class="list-group-item list-group-item-action diagram-item" data-diagram-id="{{ diagram.id }}">
+                            {{ diagram.title }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No diagrams yet. <a href="/diagrams/{{ draft.id }}">Create a diagram</a>.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 id="current-section-title">Select a section</h3>
+                <button id="generate-section-btn" class="btn btn-primary" style="display: none;">Generate with AI</button>
+            </div>
+            <div class="card-body">
+                <div id="section-content">
+                    <p class="text-muted">Select a section from the list to begin editing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Section Template (hidden) -->
+<div id="section-template" style="display: none;">
+    <div class="section-description mb-4"></div>
+    <div class="questions-container"></div>
+    <div class="mt-4">
+        <button class="btn btn-primary save-section-btn">Save Section</button>
+    </div>
+</div>
+
+<!-- Question Template (hidden) -->
+<div id="question-template" style="display: none;">
+    <div class="mb-4 question-item">
+        <label class="form-label question-label"></label>
+        <div class="question-editor"></div>
+    </div>
+</div>
+
+<!-- Diagram Preview Modal -->
+<div class="modal fade" id="diagramModal" tabindex="-1" aria-labelledby="diagramModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="diagramModalLabel">Diagram Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="diagram-preview-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-rc.2/dist/quill.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.min.js"></script>
+<script>
+    // Store draft data
+    const draftId = "{{ draft.id }}";
+    const draftSections = {{ draft.sections|tojson }};
+    const draftAnswers = {{ draft.answers|tojson if draft.answers else {} }};
+    const draftDiagrams = {{ draft.diagrams|tojson if draft.diagrams else [] }};
+    
+    // Initialize Mermaid
+    mermaid.initialize({ startOnLoad: true });
+    
+    // Initialize editors object to store Quill instances
+    const editors = {};
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up section navigation
+        const sectionLinks = document.querySelectorAll('#section-list a');
+        sectionLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section-id');
+                loadSection(sectionId);
+            });
+        });
+        
+        // Set up diagram preview
+        const diagramItems = document.querySelectorAll('.diagram-item');
+        diagramItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const diagramId = this.getAttribute('data-diagram-id');
+                showDiagramPreview(diagramId);
+            });
+        });
+        
+        // Set up generate button
+        const generateBtn = document.getElementById('generate-section-btn');
+        generateBtn.addEventListener('click', function() {
+            const sectionId = this.getAttribute('data-section-id');
+            generateSectionContent(sectionId);
+        });
+        
+        // Load first section if available
+        if (sectionLinks.length > 0) {
+            const firstSectionId = sectionLinks[0].getAttribute('data-section-id');
+            loadSection(firstSectionId);
+        }
+    });
+    
+    function loadSection(sectionId) {
+        // Find the section data
+        const section = draftSections.find(s => s.id === sectionId);
+        if (!section) return;
+        
+        // Update active section in the list
+        document.querySelectorAll('#section-list a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-section-id') === sectionId) {
+                link.classList.add('active');
+            }
+        });
+        
+        // Update section title
+        document.getElementById('current-section-title').textContent = section.title;
+        
+        // Set up generate button
+        const generateBtn = document.getElementById('generate-section-btn');
+        generateBtn.style.display = 'block';
+        generateBtn.setAttribute('data-section-id', sectionId);
+        
+        // Clear previous content
+        const sectionContent = document.getElementById('section-content');
+        sectionContent.innerHTML = '';
+        
+        // Clone and populate the section template
+        const template = document.getElementById('section-template').cloneNode(true);
+        template.style.display = 'block';
+        
+        // Set section description
+        template.querySelector('.section-description').textContent = section.description;
+        
+        // Add questions
+        const questionsContainer = template.querySelector('.questions-container');
+        if (section.questions && section.questions.length > 0) {
+            section.questions.forEach(question => {
+                const questionTemplate = document.getElementById('question-template').cloneNode(true);
+                questionTemplate.style.display = 'block';
+                
+                // Set question label
+                questionTemplate.querySelector('.question-label').textContent = question.text;
+                
+                // Create editor container with unique ID
+                const editorContainer = questionTemplate.querySelector('.question-editor');
+                const editorId = `editor-${question.id}`;
+                editorContainer.id = editorId;
+                
+                questionsContainer.appendChild(questionTemplate);
+                
+                // Initialize Quill editor after adding to DOM
+                setTimeout(() => {
+                    const quill = new Quill(`#${editorId}`, {
+                        theme: 'snow',
+                        modules: {
+                            toolbar: [
+                                ['bold', 'italic', 'underline', 'strike'],
+                                ['blockquote', 'code-block'],
+                                [{ 'header': 1 }, { 'header': 2 }],
+                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                                [{ 'script': 'sub' }, { 'script': 'super' }],
+                                [{ 'indent': '-1' }, { 'indent': '+1' }],
+                                ['link', 'image'],
+                                ['clean']
+                            ]
+                        }
+                    });
+                    
+                    // Set content if available
+                    const answer = draftAnswers[question.id];
+                    if (answer) {
+                        quill.root.innerHTML = answer;
+                    }
+                    
+                    // Store editor reference
+                    editors[question.id] = quill;
+                }, 0);
+            });
+        }
+        
+        // Set up save button
+        template.querySelector('.save-section-btn').addEventListener('click', function() {
+            saveSection(sectionId);
+        });
+        
+        // Add the populated template to the page
+        sectionContent.appendChild(template);
+    }
+    
+    function saveSection(sectionId) {
+        // Collect answers from all editors
+        const answers = { ...draftAnswers };
+        
+        // Get answers from current section
+        const section = draftSections.find(s => s.id === sectionId);
+        if (section && section.questions) {
+            section.questions.forEach(question => {
+                const editor = editors[question.id];
+                if (editor) {
+                    answers[question.id] = editor.root.innerHTML;
+                }
+            });
+        }
+        
+        // Save to server
+        fetch('/api/save-answers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                draft_id: draftId,
+                answers: answers
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Section saved successfully!');
+            } else {
+                alert('Error saving section: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving section. Please try again.');
+        });
+    }
+    
+    function generateSectionContent(sectionId) {
+        // First save the current answers
+        saveSection(sectionId);
+        
+        // Then generate content
+        fetch('/api/generate-section', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                draft_id: draftId,
+                section_id: sectionId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show the generated content in a modal or alert
+                alert('Content generated! Preview the full grant to see the results.');
+            } else {
+                alert('Error generating content: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error generating content. Please try again.');
+        });
+    }
+    
+    function showDiagramPreview(diagramId) {
+        const diagram = draftDiagrams.find(d => d.id === diagramId);
+        if (!diagram) return;
+        
+        // Set modal title
+        document.getElementById('diagramModalLabel').textContent = diagram.title;
+        
+        // Set diagram content
+        const previewContainer = document.getElementById('diagram-preview-container');
+        previewContainer.innerHTML = '';
+        
+        if (diagram.type === 'flowchart' || diagram.type === 'sequence' || diagram.type === 'classDiagram') {
+            // Mermaid diagram
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = diagram.content;
+            previewContainer.appendChild(mermaidDiv);
+            
+            // Render mermaid diagram
+            mermaid.init(undefined, mermaidDiv);
+        } else {
+            // Other diagram types (could be handled differently)
+            previewContainer.textContent = diagram.content;
+        }
+        
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('diagramModal'));
+        modal.show();
+    }
+</script>
+{% endblock %}

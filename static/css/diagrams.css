@@ -1,0 +1,36 @@
+/* Diagram Editor Styles */
+#diagram-code {
+    font-family: monospace;
+    resize: vertical;
+  }
+  
+  #diagram-preview {
+    min-height: 300px;
+    overflow: auto;
+  }
+  
+  .mermaid {
+    text-align: center;
+  }
+  
+  .diagram-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .diagram-item::before {
+    content: "📊";
+    margin-right: 0.5rem;
+  }
+  
+  .diagram-item.active {
+    background-color: #4a6fdc;
+    border-color: #4a6fdc;
+    color: white;
+  }
+  
+  #modal-preview-container {
+    overflow: auto;
+    max-height: 500px;
+  }
+  

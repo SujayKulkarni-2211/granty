@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Preview - {{ draft.title }}{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/preview.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.1.0/github-markdown.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h1>Preview: {{ draft.title }}</h1>
+        <div class="btn-group" role="group">
+            <a href="/editor/{{ draft.id }}" class="btn btn-outline-primary">Back to Editor</a>
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Export
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                    <li><a class="dropdown-item" href="/api/export/{{ draft.id }}/pdf" target="_blank">Export as PDF</a></li>
+                    <li><a class="dropdown-item" href="/api/export/{{ draft.id }}/html" target="_blank">Export as HTML</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="markdown-body">
+                    {% if draft.generated_content %}
+                        {{ draft.generated_content|safe }}
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p>No content has been generated yet. Click the button below to generate your grant proposal.</p>
+                            <button id="generate-content-btn" class="btn btn-primary">Generate Grant Content</button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Diagram Preview Modal -->
+<div class="modal fade" id="diagramModal" tabindex="-1" aria-labelledby="diagramModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="diagramModalLabel">Diagram Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="diagram-preview-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked@4.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.min.js"></script>
+<script>
+    // Store draft data
+    const draftId = "{{ draft.id }}";
+    const draftDiagrams = {{ draft.diagrams|tojson if draft.diagrams else [] }};
+    
+    // Initialize Mermaid
+    mermaid.initialize({ startOnLoad: true });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set up generate button if needed
+        const generateBtn = document.getElementById('generate-content-btn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function() {
+                generateContent();
+            });
+        }
+        
+        // Process any mermaid diagrams in the content
+        processMermaidDiagrams();
+    });
+    
+    function generateContent() {
+        // Show loading indicator
+        const contentContainer = document.querySelector('.markdown-body');
+        contentContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div><p class="mt-2">Generating your grant proposal...</p></div>';
+        
+        // Request content generation
+        fetch('/preview/' + draftId)
+            .then(response => {
+                if (response.ok) {
+                    // Reload the page to show the generated content
+                    window.location.reload();
+                } else {
+                    throw new Error('Failed to generate content');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                contentContainer.innerHTML = `<div class="alert alert-danger">Error generating content: ${error.message}</div>`;
+            });
+    }
+    
+    function processMermaidDiagrams() {
+        // Find all code blocks with mermaid class
+        const mermaidBlocks = document.querySelectorAll('pre code.language-mermaid');
+        
+        mermaidBlocks.forEach((block, index) => {
+            const content = block.textContent;
+            const container = block.parentElement;
+            
+            // Create a div for mermaid
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = content;
+            
+            // Replace the code block with the mermaid div
+            container.parentNode.replaceChild(mermaidDiv, container);
+            
+            // Initialize mermaid for this div
+            try {
+                mermaid.init(undefined, mermaidDiv);
+            } catch (error) {
+                console.error('Mermaid error:', error);
+                mermaidDiv.innerHTML = `<div class="alert alert-danger">Error rendering diagram: ${error.message}</div>`;
+            }
+        });
+    }
+</script>
+{% endblock %}

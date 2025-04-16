@@ -88,7 +88,8 @@ def upload_custom():
         'updated_at': datetime.now().isoformat(),
         'diagrams': []
     }
-    
+    answers = gemini_utils.generate_answers(sections, content)
+    draft['answers'] = answers
     storage.save_draft(draft)
     return redirect(url_for('editor', draft_id=draft_id))
 

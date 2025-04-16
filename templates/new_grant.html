@@ -42,11 +42,11 @@
                 <h5>Upload Custom Format</h5>
             </div>
             <div class="card-body">
-                <p>Upload your own grant format (text or PDF) and we'll analyze it to create a custom template.</p>
+                <p>Upload your own grant format (docx) and we'll analyze it to create a custom template.</p>
                 <form action="/upload-custom" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="custom_template" class="form-label">Custom Template File</label>
-                        <input class="form-control" type="file" id="custom_template" name="custom_template" accept=".txt,.pdf,.docx">
+                        <input class="form-control" type="file" id="custom_template" name="custom_template" accept=".docx">
                     </div>
                     <button type="submit" class="btn btn-primary">Upload and Create</button>
                 </form>

@@ -1,17 +1,20 @@
 import os
+import ast
 import json
+import re
 import google.generativeai as genai
 from config import GEMINI_API_KEY
 
 # Configure the Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
 
+
 def extract_sections_from_custom(content):
     """
     Use Gemini to extract sections and questions from a custom uploaded template
     """
-    model = genai.GenerativeModel('gemini-pro')
-    
+    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+
     prompt = f"""
     You are a grant writing assistant. I'm going to provide you with a custom grant template.
     Please analyze it and extract the main sections and potential questions that need to be answered for each section.
@@ -31,12 +34,16 @@ def extract_sections_from_custom(content):
     
     Return ONLY the JSON array, nothing else.
     """
-    
+
     response = model.generate_content(prompt)
-    
+
     try:
-        # Parse the response as JSON
-        sections = json.loads(response.text)
+
+        # Extract the required part of the response
+        text_block = response.candidates[0].content.parts[0].text
+        json_match = re.search(r"```json\n(.*?)```", text_block, re.DOTALL)
+        json_str = json_match.group(1)
+        sections = json.loads(json_str)
         return sections
     except json.JSONDecodeError:
         # If parsing fails, return a default section structure
@@ -56,37 +63,132 @@ def extract_sections_from_custom(content):
             }
         ]
 
+
+def generate_answers(draft_sections, file_contents):
+    '''Use Gemini to generate answers for the questions in the draft'''
+    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    general_format = {
+        "sections": [
+            {
+                "id": "id_of_section1",
+                "title": "title_of_section1",
+                "description": "description_of_section1",
+                "questions": [
+                    {
+                        "id": "id_of_question1_section1",
+                        "text": "Question1",
+                        "type": "type_of_question1_section1(can be ignored)"
+                    },
+                    {
+                        "id": "id_of_question2_section1",
+                        "text": "Question2",
+                        "type": "type_of_question2_section1(can be ignored)"
+                    },]
+            },
+            {
+                "id": "id_of_section2",
+                "title": "title_of_section2",
+                "description": "description_of_section2",
+                "questions": [
+                    {
+                        "id": "id_of_question1_section2",
+                        "text": "Question2",
+                        "type": "type_of_question2_section2(can be ignored)"
+                    },
+                    {
+                        "id": "id_of_question2_section2",
+                        "text": "Question2",
+                        "type": "type_of_question2_section2(can be ignored)"
+                    },]
+            },
+        ]
+    }
+    sample_answers = {"answers": [
+        {
+            "id": "id_of_section1",
+            "answers": [
+                {
+                    "id": "id_of_question1_section1",
+                    "text": "Answer1"
+                },
+                {
+                    "id": "id_of_question2_section1",
+                    "text": "Answer2"
+                },]
+        },
+        {
+            "id": "id_of_section2",
+            "answers": [
+                {
+                    "id": "id_of_question1_section2",
+                    "text": "Answer1"
+                },
+                {
+                    "id": "id_of_question2_section2",
+                    "text": "Answer2"
+                },]
+        }]}
+    prompt = f'''
+You are a grant drafting agent who has to do a few specific tasks:
+You will be provided with a list of sections and each section will have their questions.
+Below is the exact format of the input you will receive:
+{str(general_format)}
+Please provide the answers to the questions in the following format:
+{str(sample_answers)}
+Note: Until now, whatever you got is just the format of the input and output, below, you will get the actual input.
+Here are some contents specific to the grant proposal that you can use (if you find any relevant information, else ignore it):
+{file_contents}
+Below are the questions that need to be answered:
+{str(draft_sections)}
+In the format explained to you earlier, answer the above questions.
+You will have to just return the answers as per the format provided above in a JSON format.
+    '''
+    response = model.generate_content(prompt)
+    try:
+        # Extract the required part of the response
+        text_block = response.candidates[0].content.parts[0].text
+        json_match = re.search(r"```json\n(.*?)```", text_block, re.DOTALL)
+        json_str = json_match.group(1)
+        answers = ast.literal_eval(json_str)
+        return answers
+    except json.JSONDecodeError:
+        # If parsing fails, return an empty dictionary
+        return {
+            "answers": []
+        }
+
+
 def generate_grant_content(draft, template):
     """
     Generate the full grant content using Gemini
     """
     model = genai.GenerativeModel('gemini-pro')
-    
+
     # Prepare the context for Gemini
     context = {
         'template_name': template['name'],
         'template_description': template['description'],
         'sections': []
     }
-    
+
     for section in draft['sections']:
         section_data = {
             'title': section['title'],
             'description': section['description'],
             'questions': []
         }
-        
+
         for question in section.get('questions', []):
             question_id = question['id']
             answer = draft['answers'].get(question_id, '')
-            
+
             section_data['questions'].append({
                 'text': question['text'],
                 'answer': answer
             })
-        
+
         context['sections'].append(section_data)
-    
+
     # Add diagrams if available
     diagrams_context = []
     for diagram in draft.get('diagrams', []):
@@ -95,9 +197,9 @@ def generate_grant_content(draft, template):
             'type': diagram['type'],
             'description': f"Figure: {diagram['title']}"
         })
-    
+
     context['diagrams'] = diagrams_context
-    
+
     # Create the prompt for Gemini
     prompt = f"""
     You are a professional grant writer. I'm going to provide you with information about a grant proposal,
@@ -115,18 +217,18 @@ def generate_grant_content(draft, template):
     
     Sections:
     """
-    
+
     for section in context['sections']:
         prompt += f"\n\n## {section['title']}\n{section['description']}\n"
-        
+
         for question in section['questions']:
             prompt += f"\nQuestion: {question['text']}\nAnswer: {question['answer']}\n"
-    
+
     if diagrams_context:
         prompt += "\n\nDiagrams to reference:\n"
         for diagram in diagrams_context:
             prompt += f"\n- {diagram['title']} ({diagram['type']}): {diagram['description']}\n"
-    
+
     prompt += """
     
     Please generate a complete grant proposal with the following guidelines:
@@ -138,32 +240,33 @@ def generate_grant_content(draft, template):
     
     Generate the complete grant proposal now:
     """
-    
+
     response = model.generate_content(prompt)
     return response.text
+
 
 def generate_section_content(section, answers):
     """
     Generate content for a specific section using Gemini
     """
     model = genai.GenerativeModel('gemini-pro')
-    
+
     # Prepare the context for this section
     section_context = {
         'title': section['title'],
         'description': section['description'],
         'questions': []
     }
-    
+
     for question in section.get('questions', []):
         question_id = question['id']
         answer = answers.get(question_id, '')
-        
+
         section_context['questions'].append({
             'text': question['text'],
             'answer': answer
         })
-    
+
     # Create the prompt for Gemini
     prompt = f"""
     You are a professional grant writer. I'm going to provide you with information about a section of a grant proposal,
@@ -179,10 +282,10 @@ def generate_section_content(section, answers):
     
     Questions and Answers:
     """
-    
+
     for question in section_context['questions']:
         prompt += f"\nQuestion: {question['text']}\nAnswer: {question['answer']}\n"
-    
+
     prompt += """
     
     Please generate content for this section with the following guidelines:
@@ -193,6 +296,6 @@ def generate_section_content(section, answers):
     
     Generate the section content now:
     """
-    
+
     response = model.generate_content(prompt)
     return response.text

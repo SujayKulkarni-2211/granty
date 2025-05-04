@@ -129,21 +129,18 @@ def generate_answers(draft_sections, file_contents):
                 },]
         }]}
     prompt = f'''
-You are a grant drafting agent who has to do a few specific tasks:
-You will be provided with a list of sections and each section will have their questions.
-Below is the exact format of the input you will receive:
-{str(general_format)}
-Please provide the answers to the questions in the following format:
-{str(sample_answers)}
-Note: Until now, whatever you got is just the format of the input and output, below, you will get the actual input.
-Here are some contents specific to the grant proposal that you can use (if you find any relevant information, else ignore it):
-{file_contents}
-Below are the questions that need to be answered:
-{str(draft_sections)}
-In the format explained to you earlier, answer the above questions.
-You will have to just return the answers as per the format provided above in a JSON format.
+                You are a grant drafting agent who has to do a few specific tasks:
+                You will be provided with a list of sections, each section will have a list of questions (with id for each question).
+                You will have to (a) extract all the questions from the sections, (b) look through the content provided to you below and (c) answer the questions in a specific format.
+                Here are some contents specific to the grant proposal that you can use (if you find any relevant information, else ignore it):
+                {file_contents}
+                Below are the questions that need to be answered:
+                {str(draft_sections)}
+                You will have to just return a JSON array in the following format:
+                question_id: answer, question_id: answer, and so on.
     '''
     response = model.generate_content(prompt)
+    print(response)
     try:
         # Extract the required part of the response
         text_block = response.candidates[0].content.parts[0].text

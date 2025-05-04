@@ -102,13 +102,17 @@
     const draftAnswers = {{ draft.answers|tojson if draft.answers else {} }};
     const draftDiagrams = {{ draft.diagrams|tojson if draft.diagrams else [] }};
     
-    // Initialize Mermaid
-    mermaid.initialize({ startOnLoad: true });
-    
     // Initialize editors object to store Quill instances
     const editors = {};
     
     document.addEventListener('DOMContentLoaded', function() {
+
+        //load mermaid if not loaded
+        if (typeof mermaid !== "undefined") {
+            mermaid.initialize({ startOnLoad: true });
+        } else {
+            console.warn("Mermaid not loaded yet");
+        }
         // Set up section navigation
         const sectionLinks = document.querySelectorAll('#section-list a');
         sectionLinks.forEach(link => {

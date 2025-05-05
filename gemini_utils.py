@@ -140,7 +140,6 @@ def generate_answers(draft_sections, file_contents):
                 question_id: answer, question_id: answer, and so on.
     '''
     response = model.generate_content(prompt)
-    print(response)
     try:
         # Extract the required part of the response
         text_block = response.candidates[0].content.parts[0].text

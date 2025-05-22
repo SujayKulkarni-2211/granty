@@ -13,7 +13,7 @@ def extract_sections_from_custom(content):
     """
     Use Gemini to extract sections and questions from a custom uploaded template
     """
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    model = genai.GenerativeModel()
 
     prompt = f"""
     You are a grant writing assistant. I'm going to provide you with a custom grant template.
@@ -66,7 +66,7 @@ def extract_sections_from_custom(content):
 
 def generate_answers(draft_sections, file_contents):
     '''Use Gemini to generate answers for the questions in the draft'''
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    model = genai.GenerativeModel()
     general_format = {
         "sections": [
             {
@@ -158,7 +158,7 @@ def generate_grant_content(draft, template):
     """
     Generate the full grant content using Gemini
     """
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel()
 
     # Prepare the context for Gemini
     context = {
@@ -245,7 +245,7 @@ def generate_section_content(section, answers):
     """
     Generate content for a specific section using Gemini
     """
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel()
 
     # Prepare the context for this section
     section_context = {

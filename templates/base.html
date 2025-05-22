@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}grantY - AI-Powered Grant Writing Assistant{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            color: var(--dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Universe Background */
+        .universe-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            opacity: 0.9;
+        }
+
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: var(--opacity);
+            }
+        }
+
+        /* Header Styles */
+        .navbar {
+            background-color: rgba(15, 12, 41, 0.95) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: 700;
+            color: white !important;
+            text-decoration: none;
+        }
+
+        .navbar-brand span {
+            color: var(--accent);
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            margin: 0 10px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--accent) !important;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Container with glassmorphism */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border-color: rgba(76, 201, 240, 0.3);
+        }
+
+        .card-header {
+            background: rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+        }
+
+        .card-body {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 50px;
+            font-weight: 500;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            z-index: -1;
+            border-radius: 50px;
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #27ae60);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-outline-primary {
+            background-color: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--accent);
+            color: var(--dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 201, 240, 0.3);
+        }
+
+        /* Form Controls */
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            padding: 12px 15px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+            color: white;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-label {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: rgba(15, 12, 41, 0.95);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        }
+
+        /* Text colors */
+        h1, h2, h3, h4, h5, h6 {
+            color: white;
+        }
+
+        .text-muted {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+
+        /* Alerts */
+        .alert {
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-info {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: rgba(52, 152, 219, 0.3);
+            color: white;
+        }
+
+        .alert-success {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: rgba(46, 204, 113, 0.3);
+            color: white;
+        }
+
+        .alert-warning {
+            background: rgba(243, 156, 18, 0.1);
+            border-color: rgba(243, 156, 18, 0.3);
+            color: white;
+        }
+
+        .alert-danger {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: rgba(231, 76, 60, 0.3);
+            color: white;
+        }
+
+        /* List Groups */
+        .list-group-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(76, 201, 240, 0.3);
+            transform: translateX(5px);
+        }
+
+        .list-group-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--accent);
+        }
+
+        /* Badge */
+        .badge {
+            border-radius: 20px;
+            padding: 6px 12px;
+        }
+
+        /* Modal */
+        .modal-content {
+            background: rgba(15, 12, 41, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .modal-body {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            opacity: 0.1;
+            filter: blur(20px);
+            z-index: -1;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        .floating-1 {
+            width: 300px;
+            height: 300px;
+            top: 10%;
+            left: -150px;
+            animation-duration: 15s;
+        }
+
+        .floating-2 {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            right: -100px;
+            animation-duration: 12s;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            25% {
+                transform: translate(50px, 50px);
+            }
+            50% {
+                transform: translate(0, 100px);
+            }
+            75% {
+                transform: translate(-50px, 50px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 20px 15px;
+                margin: 10px 0;
+            }
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <!-- Universe Background -->
+    <div class="universe-bg"></div>
+    <div id="stars-container"></div>
+    
+    <!-- Floating Elements -->
+    <div class="floating-element floating-1"></div>
+    <div class="floating-element floating-2"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">grant<span style="color: var(--accent);">Y</span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/new-grant"><i class="fas fa-plus"></i> New Grant</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/templates"><i class="fas fa-layer-group"></i> Templates</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <div class="main-container">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">
+                <span style="font-size: 18px; font-weight: 600;">grant<span style="color: var(--accent);">Y</span></span>
+                - AI-Powered Grant Writing Assistant &copy; 2023
+            </p>
+            <p class="mt-2" style="color: rgba(255, 255, 255, 0.6);">
+                <small>Empowering researchers with intelligent grant writing solutions</small>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Create Stars Background
+        function createStars() {
+            const starsContainer = document.getElementById('stars-container');
+            const starsCount = 100;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 2 + 1;
+                
+                // Random opacity and duration for twinkling
+                const opacity = Math.random() * 0.7 + 0.3;
+                const duration = Math.random() * 5 + 3;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--opacity', opacity);
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Initialize stars
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

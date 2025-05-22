@@ -1,0 +1,46 @@
+/* Editor Styles */
+.ql-editor {
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .section-description {
+    color: #6c757d;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+  
+  .list-group-item.active {
+    background-color: #4a6fdc;
+    border-color: #4a6fdc;
+  }
+  
+  .question-item {
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: #f8f9fa;
+  }
+  
+  .question-label {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  
+  #diagram-preview-container {
+    overflow: auto;
+    max-height: 500px;
+  }
+  
+  .diagram-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .diagram-item::before {
+    content: "📊";
+    margin-right: 0.5rem;
+  }
+  

@@ -1,0 +1,145 @@
+{
+  "id": "69d17512-5458-464a-9de2-123ee1692c3c",
+  "title": "Custom Draft - 2025-05-22 20:01",
+  "template_id": "3056f973-2e43-4325-825e-db89a8f5eb4a",
+  "sections": [
+    {
+      "id": "project-summary",
+      "title": "Project Summary",
+      "description": "A concise overview of the project.",
+      "questions": [
+        {
+          "id": "project-summary-overview",
+          "text": "Provide a brief overview of the project and its goals.",
+          "type": "textarea"
+        },
+        {
+          "id": "project-summary-impact",
+          "text": "What is the expected impact of this project?",
+          "type": "textarea"
+        },
+        {
+          "id": "project-summary-innovation",
+          "text": "What is innovative or unique about this project?",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "needs-statement",
+      "title": "Needs Statement",
+      "description": "Clearly articulate the problem the project addresses.",
+      "questions": [
+        {
+          "id": "needs-statement-problem",
+          "text": "Describe the problem the project aims to address.  Provide data to support the significance of this problem.",
+          "type": "textarea"
+        },
+        {
+          "id": "needs-statement-target-population",
+          "text": "Who is the target population or beneficiary of this project?",
+          "type": "textarea"
+        },
+        {
+          "id": "needs-statement-existing-solutions",
+          "text": "What existing solutions are available to address this problem, and why are they insufficient?",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "project-description",
+      "title": "Project Description",
+      "description": "Detailed explanation of the project's activities and methodology.",
+      "questions": [
+        {
+          "id": "project-description-activities",
+          "text": "Describe the key activities and tasks involved in the project.",
+          "type": "textarea"
+        },
+        {
+          "id": "project-description-timeline",
+          "text": "Provide a timeline for project implementation.",
+          "type": "textarea"
+        },
+        {
+          "id": "project-description-methodology",
+          "text": "Describe the methodology or approach that will be used.",
+          "type": "textarea"
+        },
+        {
+          "id": "project-description-evaluation",
+          "text": "How will the success of the project be evaluated?",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "budget-justification",
+      "title": "Budget Justification",
+      "description": "Detailed breakdown of project costs.",
+      "questions": [
+        {
+          "id": "budget-justification-details",
+          "text": "Provide a detailed budget breakdown, justifying each expense.",
+          "type": "textarea"
+        },
+        {
+          "id": "budget-justification-matching-funds",
+          "text": "If applicable, describe any matching funds or in-kind contributions.",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "evaluation-plan",
+      "title": "Evaluation Plan",
+      "description": "Strategy for measuring project success.",
+      "questions": [
+        {
+          "id": "evaluation-plan-metrics",
+          "text": "What specific metrics will be used to measure the project's success?",
+          "type": "textarea"
+        },
+        {
+          "id": "evaluation-plan-data-collection",
+          "text": "How will data be collected and analyzed?",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "sustainability-plan",
+      "title": "Sustainability Plan",
+      "description": "How the project will continue after funding ends.",
+      "questions": [
+        {
+          "id": "sustainability-plan-strategy",
+          "text": "Describe how the project's benefits will be sustained beyond the grant period.",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "organization-information",
+      "title": "Organization Information",
+      "description": "Information about the applicant organization.",
+      "questions": [
+        {
+          "id": "organization-information-overview",
+          "text": "Provide a brief overview of your organization's mission and experience.",
+          "type": "textarea"
+        },
+        {
+          "id": "organization-information-capacity",
+          "text": "Describe your organization's capacity to implement this project.",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "answers": {},
+  "created_at": "2025-05-22T20:01:15.694704",
+  "updated_at": "2025-05-22T20:01:15.694704",
+  "diagrams": []
+}

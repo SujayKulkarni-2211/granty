@@ -1,0 +1,766 @@
+{% extends "base.html" %}
+
+{% block title %}Preview - {{ draft.title }}{% endblock %}
+
+{% block styles %}
+<style>
+/* Document Typography Styling */
+.content-display {
+    background: rgba(255, 255, 255, 0.95);
+    color: #2c3e50;
+    padding: 40px;
+    border-radius: 15px;
+    line-height: 1.8;
+    font-size: 16px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Document Headers */
+.content-display h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1.5rem 0;
+    text-align: center;
+    border-bottom: 3px solid #3498db;
+    padding-bottom: 15px;
+}
+
+.content-display h2 {
+    color: #34495e;
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem 0;
+    border-left: 4px solid #3498db;
+    padding-left: 20px;
+    background: rgba(52, 152, 219, 0.05);
+    padding: 15px 20px;
+    border-radius: 8px;
+}
+
+.content-display h3 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 8px;
+}
+
+.content-display h4 {
+    color: #34495e;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 1.2rem 0 0.8rem 0;
+}
+
+.content-display h5, .content-display h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem 0;
+}
+
+/* Document Paragraphs */
+.content-display p {
+    margin-bottom: 1.5rem;
+    text-align: justify;
+    color: #2c3e50;
+    line-height: 1.8;
+}
+
+/* Document Lists */
+.content-display ul, .content-display ol {
+    margin: 1.5rem 0 1.5rem 2rem;
+    color: #2c3e50;
+}
+
+.content-display li {
+    margin-bottom: 0.8rem;
+    line-height: 1.6;
+}
+
+/* Document Tables */
+.content-display table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.content-display th, .content-display td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.content-display th {
+    background: #3498db;
+    color: white;
+    font-weight: 600;
+}
+
+.content-display tr:nth-child(even) {
+    background: rgba(52, 152, 219, 0.02);
+}
+
+/* Document Blockquotes */
+.content-display blockquote {
+    border-left: 4px solid #3498db;
+    padding: 20px;
+    margin: 2rem 0;
+    background: rgba(52, 152, 219, 0.05);
+    font-style: italic;
+    border-radius: 0 8px 8px 0;
+}
+
+/* Document Strong/Bold Text */
+.content-display strong, .content-display b {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+/* Document Emphasis */
+.content-display em, .content-display i {
+    color: #34495e;
+    font-style: italic;
+}
+
+/* Document Code */
+.content-display code {
+    background: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: #e74c3c;
+    border: 1px solid #ecf0f1;
+}
+
+.content-display pre {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    border: 1px solid #ecf0f1;
+    margin: 1.5rem 0;
+}
+
+/* Document Links */
+.content-display a {
+    color: #3498db;
+    text-decoration: none;
+    border-bottom: 1px dotted #3498db;
+}
+
+.content-display a:hover {
+    color: #2980b9;
+    border-bottom: 1px solid #2980b9;
+}
+
+/* Cover Sheet Styling */
+.content-display .cover-sheet {
+    text-align: center;
+    padding: 3rem 0;
+    border-bottom: 2px solid #ecf0f1;
+    margin-bottom: 3rem;
+}
+
+/* Section Breaks */
+.content-display hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #3498db, transparent);
+    margin: 3rem 0;
+}
+
+/* Editable Content Styling */
+.editable-content {
+    border: 2px dashed #3498db !important;
+    background: rgba(52, 152, 219, 0.02) !important;
+    position: relative;
+}
+
+.editable-content::before {
+    content: '✏️ Click to edit content';
+    position: absolute;
+    top: -30px;
+    right: 0;
+    background: #3498db;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.editable-content:focus {
+    outline: none;
+    border-color: #2980b9 !important;
+    background: white !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+/* Loading States */
+#loading-indicator {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: white;
+}
+
+#loading-indicator .spinner-border {
+    width: 4rem;
+    height: 4rem;
+    border-width: 4px;
+}
+
+/* Button Styling */
+.btn-group .btn {
+    margin: 0 5px;
+}
+
+/* Card Header Styling */
+.card-header {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-header h5 {
+    color: white;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Payment Modal Improvements */
+.modal-content {
+    border-radius: 20px;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px 20px 0 0;
+}
+
+/* Success States */
+.alert-success {
+    border-color: rgba(46, 204, 113, 0.3);
+    background: rgba(46, 204, 113, 0.1);
+    color: white;
+}
+
+.alert-info {
+    border-color: rgba(52, 152, 219, 0.3);
+    background: rgba(52, 152, 219, 0.1);
+    color: white;
+}
+
+.alert-warning {
+    border-color: rgba(243, 156, 18, 0.3);
+    background: rgba(243, 156, 18, 0.1);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-display {
+        padding: 25px 20px;
+        font-size: 15px;
+    }
+    
+    .content-display h1 {
+        font-size: 2rem;
+    }
+    
+    .content-display h2 {
+        font-size: 1.6rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-group .btn {
+        margin: 0;
+        width: 100%;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .no-print { 
+        display: none !important; 
+    }
+    
+    .content-display {
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    body {
+        background: white !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-between align-items-center mb-4">
+        <h1 style="color: white; margin: 0;">Preview: {{ draft.title }}</h1>
+        <div class="btn-group no-print" role="group">
+            <a href="/editor/{{ draft.id }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Back to Editor
+            </a>
+            <button id="save-changes-btn" class="btn btn-warning" style="display: none;" onclick="saveContentChanges()">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="downloadPDF()">
+                        <i class="fas fa-file-pdf"></i> Download as PDF
+                    </a></li>
+                    <li><a class="dropdown-item" href="/api/export/{{ draft.id }}/html" target="_blank">
+                        <i class="fas fa-code"></i> Export as HTML
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-file-alt"></i> Grant Proposal Content</h5>
+                <div class="no-print">
+                    <button id="edit-mode-btn" class="btn btn-sm btn-secondary" onclick="toggleEditMode()">
+                        <i class="fas fa-edit"></i> Enable Editing
+                    </button>
+                    <button id="generate-content-btn" class="btn btn-sm btn-primary" onclick="generateContent()">
+                        <i class="fas fa-magic"></i> Generate Content
+                    </button>
+                </div>
+            </div>
+            <div class="card-body" style="padding: 0;">
+                <div id="content-container">
+                    {% if draft.generated_content %}
+                        <div id="editable-content" class="content-display">
+                            {{ draft.generated_content|safe }}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center m-4">
+                            <h4><i class="fas fa-magic"></i> Ready to Generate Your Grant Proposal!</h4>
+                            <p>Click the "Generate Content" button to create your professional grant proposal based on your answers.</p>
+                            <button class="btn btn-primary btn-lg" onclick="generateContent()">
+                                <i class="fas fa-rocket"></i> Generate Grant Content
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div id="loading-indicator" style="display: none;" class="text-center py-5">
+                    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div>
+                    <h4 class="mt-3"><i class="fas fa-robot"></i> AI is crafting your grant proposal...</h4>
+                    <p>This may take a moment. Please wait while we generate professional content.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Payment Modal - Simple HTML -->
+<div id="paymentModal" class="custom-modal" style="display: none;">
+    <div class="custom-modal-backdrop"></div>
+    <div class="custom-modal-dialog">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header">
+                <h5><i class="fas fa-credit-card"></i> Download Your Grant Proposal PDF</h5>
+                <button type="button" class="custom-close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="custom-modal-body">
+                <!-- Coupon Section -->
+                <div class="coupon-section">
+                    <div class="coupon-box">
+                        <h6><i class="fas fa-ticket-alt"></i> Have a Coupon Code?</h6>
+                        <div class="coupon-input-group">
+                            <input type="text" id="coupon-code" placeholder="Enter coupon code">
+                            <button type="button" onclick="applyCoupon()">Apply</button>
+                        </div>
+                        <small>💡 Use "<strong>grantyadmin</strong>" for free download</small>
+                    </div>
+                </div>
+                
+                <!-- Payment Section -->
+                <div class="payment-section">
+                    <h6><i class="fas fa-qrcode"></i> Scan QR Code to Pay</h6>
+                    <p>Secure payment - Only ₹5 for your complete PDF</p>
+                    
+                    <!-- QR Code Display -->
+                    <div class="qr-section">
+                        <div class="qr-code-container">
+                            <div class="qr-placeholder">
+                                <!-- Replace this div with your QR code image -->
+                                <div style="width: 200px; height: 200px; background: white;">
+                                    <img src="/static/images/qr.jpg" alt="Payment QR Code" style="width: 100%; height: 100%; object-fit: contain;">
+                                </div>
+                                <div>Scan to Pay ₹5</div>
+                                <div style="margin-top: 10px; font-size: 10px;">Payment ID: PAY12345</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Payment Instructions -->
+                        <div class="payment-instructions">
+                            <strong><i class="fas fa-info-circle"></i> How to pay:</strong>
+                            <ol>
+                                <li>Open any UPI app (PhonePe, GPay, Paytm)</li>
+                                <li>Scan the QR code above</li>
+                                <li>Pay ₹5 securely</li>
+                                <li>Click "Check Payment" below</li>
+                            </ol>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Status -->
+                    <div id="payment-status" style="display: none;" class="payment-status">
+                        <div class="status-message">
+                            <div class="spinner"></div>
+                            <span>⏳ Verifying payment... Please wait.</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Button -->
+                    <button id="check-payment-btn" onclick="checkPaymentStatus()" class="payment-btn">
+                        <i class="fas fa-check-circle"></i> I've Made the Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="custom-modal" style="display: none;">
+    <div class="custom-modal-backdrop"></div>
+    <div class="custom-modal-dialog" style="max-width: 500px;">
+        <div class="custom-modal-content">
+            <div class="custom-modal-header success-header">
+                <h5><i class="fas fa-check-circle"></i> Payment Successful!</h5>
+                <button type="button" class="custom-close-btn" onclick="closeSuccessModal()">&times;</button>
+            </div>
+            <div class="custom-modal-body" style="text-align: center;">
+                <div style="font-size: 5rem; margin-bottom: 20px;">✅</div>
+                <h4>Payment Completed Successfully!</h4>
+                <div class="transaction-details">
+                    <strong>Transaction Details:</strong><br>
+                    Payment ID: <span id="transaction-id">TXN123456789</span><br>
+                    Amount: ₹5.00<br>
+                    Status: Verified ✅
+                </div>
+                <p>Your grant proposal PDF is ready for download!</p>
+                <button onclick="startDownload()" class="download-btn">
+                    <i class="fas fa-download"></i> Download PDF Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const draftId = "{{ draft.id }}";
+let isEditMode = false;
+
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, setting up event listeners');
+    
+    // Make sure Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap not loaded!');
+        return;
+    }
+    
+    console.log('Bootstrap loaded successfully');
+});
+
+function generateContent() {
+    console.log('Generate content clicked for draft:', draftId);
+    
+    const contentContainer = document.getElementById('content-container');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    // Show loading
+    contentContainer.style.display = 'none';
+    loadingIndicator.style.display = 'block';
+    
+    // Make request
+    fetch('/api/generate-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ draft_id: draftId })
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        
+        loadingIndicator.style.display = 'none';
+        contentContainer.style.display = 'block';
+        
+        if (data.success) {
+            contentContainer.innerHTML = `<div id="editable-content" class="content-display">${data.content}</div>`;
+            showAlert('🎉 Content generated successfully!', 'success');
+        } else {
+            showAlert('❌ Error: ' + (data.error || 'Unknown error'), 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        loadingIndicator.style.display = 'none';
+        contentContainer.style.display = 'block';
+        showAlert('❌ Error generating content: ' + error.message, 'danger');
+    });
+}
+
+function toggleEditMode() {
+    const editableContent = document.getElementById('editable-content');
+    const editBtn = document.getElementById('edit-mode-btn');
+    const saveBtn = document.getElementById('save-changes-btn');
+    
+    if (!editableContent) {
+        showAlert('⚠️ Generate content first!', 'warning');
+        return;
+    }
+    
+    if (!isEditMode) {
+        editableContent.contentEditable = true;
+        editableContent.classList.add('editable-content');
+        editableContent.focus();
+        editBtn.innerHTML = '<i class="fas fa-times"></i> Disable Editing';
+        editBtn.className = 'btn btn-sm btn-warning';
+        saveBtn.style.display = 'inline-block';
+        isEditMode = true;
+        showAlert('✏️ Editing enabled! Click anywhere to edit content.', 'info');
+    } else {
+        editableContent.contentEditable = false;
+        editableContent.classList.remove('editable-content');
+        editBtn.innerHTML = '<i class="fas fa-edit"></i> Enable Editing';
+        editBtn.className = 'btn btn-sm btn-secondary';
+        saveBtn.style.display = 'none';
+        isEditMode = false;
+        showAlert('💾 Editing disabled.', 'info');
+    }
+}
+
+function saveContentChanges() {
+    const editableContent = document.getElementById('editable-content');
+    if (!editableContent) return;
+    
+    fetch('/api/save-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            draft_id: draftId,
+            content: editableContent.innerHTML
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('💾 Changes saved successfully!', 'success');
+            toggleEditMode();
+        } else {
+            showAlert('❌ Error saving: ' + data.error, 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('❌ Save error: ' + error.message, 'danger');
+    });
+}
+
+// FIXED DOWNLOAD PDF FUNCTION
+function downloadPDF() {
+    console.log('Download PDF clicked!');
+    
+    const editableContent = document.getElementById('editable-content');
+    if (!editableContent) {
+        showAlert('⚠️ Generate content first!', 'warning');
+        return;
+    }
+    
+    try {
+        // Get modal element
+        const modalElement = document.getElementById('paymentModal');
+        console.log('Modal element found:', modalElement);
+        
+        if (!modalElement) {
+            console.error('Modal element not found!');
+            showAlert('❌ Modal not found! Please refresh the page.', 'danger');
+            return;
+        }
+        
+        // Check if Bootstrap is available
+        if (typeof bootstrap === 'undefined') {
+            console.error('Bootstrap not loaded!');
+            showAlert('❌ Bootstrap not loaded! Please refresh the page.', 'danger');
+            return;
+        }
+        
+        // Reset modal state
+        const paymentStatus = document.getElementById('payment-status');
+        const checkBtn = document.getElementById('check-payment-btn');
+        const couponInput = document.getElementById('coupon-code');
+        
+        if (paymentStatus) paymentStatus.style.display = 'none';
+        if (checkBtn) {
+            checkBtn.disabled = false;
+            checkBtn.innerHTML = '<i class="fas fa-check-circle"></i> I\'ve Made the Payment';
+        }
+        if (couponInput) couponInput.value = '';
+        
+        // Create and show modal
+        const modal = new bootstrap.Modal(modalElement, {
+            backdrop: true,
+            keyboard: true,
+            focus: true
+        });
+        
+        console.log('Showing modal...');
+        modal.show();
+        
+        // Add event listener for modal events
+        modalElement.addEventListener('shown.bs.modal', function() {
+            console.log('Modal shown successfully!');
+        });
+        
+        modalElement.addEventListener('hidden.bs.modal', function() {
+            console.log('Modal hidden');
+        });
+        
+    } catch (error) {
+        console.error('Error opening modal:', error);
+        showAlert('❌ Error opening payment modal: ' + error.message, 'danger');
+    }
+}
+
+function applyCoupon() {
+    const couponCode = document.getElementById('coupon-code').value.trim();
+    
+    if (!couponCode) {
+        showAlert('⚠️ Please enter a coupon code', 'warning');
+        return;
+    }
+    
+    if (couponCode.toLowerCase() === 'grantyadmin') {
+        const modalElement = document.getElementById('paymentModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+        
+        showAlert('🎉 Admin coupon applied! Starting free download...', 'success');
+        setTimeout(() => startDownload(true), 1500);
+    } else {
+        showAlert('❌ Invalid coupon code', 'danger');
+    }
+}
+
+function checkPaymentStatus() {
+    const checkBtn = document.getElementById('check-payment-btn');
+    const paymentStatus = document.getElementById('payment-status');
+    
+    if (checkBtn) {
+        checkBtn.disabled = true;
+        checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking Payment...';
+    }
+    
+    if (paymentStatus) {
+        paymentStatus.style.display = 'block';
+    }
+    
+    // Simulate payment verification process
+    setTimeout(() => {
+        try {
+            // Hide payment modal
+            const paymentModalElement = document.getElementById('paymentModal');
+            const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
+            if (paymentModal) paymentModal.hide();
+            
+            // Generate random transaction ID
+            const transactionId = 'TXN' + Date.now().toString().slice(-8) + Math.random().toString(36).substr(2, 4).toUpperCase();
+            const transactionElement = document.getElementById('transaction-id');
+            if (transactionElement) {
+                transactionElement.textContent = transactionId;
+            }
+            
+            // Show success modal
+            const successModalElement = document.getElementById('successModal');
+            if (successModalElement) {
+                const successModal = new bootstrap.Modal(successModalElement);
+                successModal.show();
+            }
+            
+            showAlert('🎉 Payment verified successfully!', 'success');
+        } catch (error) {
+            console.error('Error in payment verification:', error);
+            showAlert('❌ Error verifying payment: ' + error.message, 'danger');
+        }
+    }, 3000);
+}
+
+function startDownload(isFree = false) {
+    const url = `/api/download-pdf/${draftId}${isFree ? '?coupon=grantyadmin' : ''}`;
+    
+    showAlert('📥 Starting PDF download...', 'info');
+    
+    // Create download link
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = '';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Close success modal
+    const successModalElement = document.getElementById('successModal');
+    const successModal = bootstrap.Modal.getInstance(successModalElement);
+    if (successModal) successModal.hide();
+    
+    showAlert('✅ Download completed!', 'success');
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    setTimeout(() => {
+        if (alertDiv.parentNode) alertDiv.parentNode.removeChild(alertDiv);
+    }, 5000);
+}
+
+// Test function - you can call this in browser console to test modal
+function testModal() {
+    console.log('Testing modal...');
+    downloadPDF();
+}
+</script>
+{% endblock %}

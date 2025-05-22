@@ -1,0 +1,369 @@
+{
+  "id": "3352c5ac-28bf-44ae-abdb-c4139855c602",
+  "title": "Custom Draft - 2025-05-22 21:35",
+  "template_id": "a6e3f1ab-35aa-4e4e-912a-dbc72403a1f7",
+  "sections": [
+    {
+      "id": "cover-sheet",
+      "title": "Cover Sheet",
+      "description": "Basic information about the organization and the grant application.",
+      "questions": [
+        {
+          "id": "application-date",
+          "text": "Date of Application",
+          "type": "text"
+        },
+        {
+          "id": "organization-name",
+          "text": "Legal Name of Organization Applying",
+          "type": "text"
+        },
+        {
+          "id": "year-founded",
+          "text": "Year Founded",
+          "type": "text"
+        },
+        {
+          "id": "annual-budget",
+          "text": "Current Annual Operating Budget",
+          "type": "text"
+        },
+        {
+          "id": "united-way-funding",
+          "text": "Are you currently receiving United Way Program Funding? Identify programs and amount:",
+          "type": "textarea"
+        },
+        {
+          "id": "executive-director",
+          "text": "Executive Director",
+          "type": "text"
+        },
+        {
+          "id": "contact-person",
+          "text": "Contact Person/Title (if different from Executive Director)",
+          "type": "text"
+        },
+        {
+          "id": "address",
+          "text": "Address (principal/administrative office)",
+          "type": "text"
+        },
+        {
+          "id": "mailing-address",
+          "text": "Mailing Address, if different from above",
+          "type": "text"
+        },
+        {
+          "id": "city-state-zip",
+          "text": "City, State, Zip",
+          "type": "text"
+        },
+        {
+          "id": "phone-number",
+          "text": "Phone Number",
+          "type": "text"
+        },
+        {
+          "id": "fax-number",
+          "text": "Fax Number",
+          "type": "text"
+        },
+        {
+          "id": "project-name",
+          "text": "Project Name",
+          "type": "text"
+        },
+        {
+          "id": "grant-purpose",
+          "text": "Purpose of Grant (one sentence)",
+          "type": "textarea"
+        },
+        {
+          "id": "project-dates",
+          "text": "Beginning and Ending Dates of the Project/Campaign",
+          "type": "text"
+        },
+        {
+          "id": "amount-requested",
+          "text": "Amount Requested",
+          "type": "text"
+        },
+        {
+          "id": "total-project-cost",
+          "text": "Total Project Cost",
+          "type": "text"
+        },
+        {
+          "id": "geographic-area",
+          "text": "Geographic Area Served",
+          "type": "text"
+        },
+        {
+          "id": "board-chair-signature",
+          "text": "Signature: Board of Directors Chairperson",
+          "type": "text"
+        },
+        {
+          "id": "board-chair-typed-name",
+          "text": "Typed Name and Title",
+          "type": "text"
+        },
+        {
+          "id": "executive-director-signature",
+          "text": "Signature: Executive Director",
+          "type": "text"
+        },
+        {
+          "id": "executive-director-typed-name",
+          "text": "Typed Name and Title",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "id": "narrative-section",
+      "title": "Narrative",
+      "description": "Detailed description of the organization and the proposed project.",
+      "questions": [
+        {
+          "id": "organization-history",
+          "text": "Summarize your organization\u2019s history.",
+          "type": "textarea"
+        },
+        {
+          "id": "mission-goals-challenges",
+          "text": "State your mission and goals, future challenges, and long-range plans.",
+          "type": "textarea"
+        },
+        {
+          "id": "current-programs",
+          "text": "Outline current programs and activities.",
+          "type": "textarea"
+        },
+        {
+          "id": "accomplishments",
+          "text": "Highlight accomplishments.",
+          "type": "textarea"
+        },
+        {
+          "id": "differentiation",
+          "text": "Differentiate yourself from similar or competing organizations.",
+          "type": "textarea"
+        },
+        {
+          "id": "project-description",
+          "text": "Describe the proposed program or project.",
+          "type": "textarea"
+        },
+        {
+          "id": "needs-problems-addressed",
+          "text": "Identify the needs/problems to be addressed, target population and number of people to be served by the project.",
+          "type": "textarea"
+        },
+        {
+          "id": "project-goals-objectives",
+          "text": "Describe the project goals and objectives, and your plan to meet them.",
+          "type": "textarea"
+        },
+        {
+          "id": "new-or-continuing",
+          "text": "Define the project as a new or continuing program.",
+          "type": "text"
+        },
+        {
+          "id": "partners-funders",
+          "text": "Identify other organizations, partners or funders participating in the project and their roles.",
+          "type": "textarea"
+        },
+        {
+          "id": "implementation-timetable",
+          "text": "Provide a timetable for implementation.",
+          "type": "textarea"
+        },
+        {
+          "id": "long-term-funding",
+          "text": "Identify long-term funding resources.",
+          "type": "textarea"
+        },
+        {
+          "id": "similar-program-impact",
+          "text": "If a similar program or service has been conducted by your organization or another, please discuss its impact. Does it represent an expansion or duplication of services in your area? If it doesn\u2019t, define its potential to serve as a model program locally or nationally.",
+          "type": "textarea"
+        },
+        {
+          "id": "evaluation-plan",
+          "text": "Describe your plan to document progress and results.",
+          "type": "textarea"
+        },
+        {
+          "id": "communication-plan",
+          "text": "Set measurable goals for the program and specify your plans to communicate with the foundation during the grant period.",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "attachments-section",
+      "title": "Attachments",
+      "description": "Supporting documents required for the grant application.",
+      "questions": [
+        {
+          "id": "irs-determination-letter",
+          "text": "Copy of the current IRS determination letter indicating 501(c)(3) tax-exempt status.",
+          "type": "text"
+        },
+        {
+          "id": "payroll-tax-statement",
+          "text": "Statement verifying payroll tax payments.",
+          "type": "text"
+        },
+        {
+          "id": "organizational-structure",
+          "text": "Organizational structure, including: List of officers and directors, including occupations, places of employment, and relevant affiliations; Description of board responsibilities, including committee assignments; Resumes and/or job descriptions of key personnel involved in the project.",
+          "type": "textarea"
+        },
+        {
+          "id": "finances",
+          "text": "Finances, including: Grant budget; List of other funders, potential funders and amounts committed or requested, including public contracts, individual contributions and other sources of income supporting the project; Current board-approved annual operating budget, including expenses and income; Most recent audited annual financial statement; Letters of support (optional) that substantiate need for the project and collaboration with other organizations; Annual report, if available.",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "budget-section",
+      "title": "Budget",
+      "description": "Detailed breakdown of project expenses and income.",
+      "questions": [
+        {
+          "id": "budget-period",
+          "text": "Please specify the budget period (e.g. January 1, 1996 to December 30, 1996).",
+          "type": "text"
+        },
+        {
+          "id": "expenses",
+          "text": "Please itemize the following expenses. Be sure to include any additional items relevant to your particular program. Provide an expense total. Salaries and wages by individual position, specifying full- or part-time positions; Payroll taxes; Fringe benefits and related fees; Consultant and professional fees (e.g. accounting, legal, etc.); Travel; Equipment; Supplies; Printing and copying; Telephone and fax; Postage and delivery; Rent; Utilities; In-kind expenses",
+          "type": "textarea"
+        },
+        {
+          "id": "income",
+          "text": "Please include all confirmed and anticipated sources of revenue, and indicate their status. Provide an income total. Government grants and contracts; Foundations; Corporations; Earned Income; United Way, Combined Federal Campaign or other federated campaigns; Individual contributions; Fundraising events and product sales; Membership income; In-kind support; Additional revenue",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "capital-campaign-narrative",
+      "title": "Capital Campaign Narrative",
+      "description": "Detailed description of the organization and the proposed capital campaign.",
+      "questions": [
+        {
+          "id": "organization-history-capital",
+          "text": "Summarize your organization\u2019s history.",
+          "type": "textarea"
+        },
+        {
+          "id": "mission-goals-challenges-capital",
+          "text": "State your mission and goals, future challenges, and long-range plans.",
+          "type": "textarea"
+        },
+        {
+          "id": "current-programs-capital",
+          "text": "Describe current programs, activities and accomplishments.",
+          "type": "textarea"
+        },
+        {
+          "id": "differentiation-capital",
+          "text": "Differentiate yourself from similar or competing organizations.",
+          "type": "textarea"
+        },
+        {
+          "id": "campaign-description",
+          "text": "Describe the proposed campaign, including goals and objectives.",
+          "type": "textarea"
+        },
+        {
+          "id": "needs-problems-addressed-capital",
+          "text": "Identify the need/problem to be addressed, target population and number of people to be served by the project.",
+          "type": "textarea"
+        },
+        {
+          "id": "new-or-continuing-capital",
+          "text": "Define the campaign as new or continuing.",
+          "type": "text"
+        },
+        {
+          "id": "partners-funders-capital",
+          "text": "Identify other participating organizations in the project and their roles.",
+          "type": "textarea"
+        },
+        {
+          "id": "implementation-timetable-capital",
+          "text": "Provide a timetable for implementation and completion.",
+          "type": "textarea"
+        },
+        {
+          "id": "campaign-leadership",
+          "text": "List the campaign leadership, their strengths and affiliations.",
+          "type": "textarea"
+        },
+        {
+          "id": "regulatory-approvals",
+          "text": "Identify regulatory approvals, if required.",
+          "type": "textarea"
+        },
+        {
+          "id": "operational-expenses",
+          "text": "Discuss implications of this campaign in relation to the organization\u2019s ongoing operational expenses.",
+          "type": "textarea"
+        },
+        {
+          "id": "critical-timing",
+          "text": "If timing is a critical success factor or a \u201cwindow of opportunity\u201d exists that impacts the success of your capital campaign, please elaborate.",
+          "type": "textarea"
+        },
+        {
+          "id": "evaluation-plan-capital",
+          "text": "Describe your plan to document progress and results.",
+          "type": "textarea"
+        },
+        {
+          "id": "communication-plan-capital",
+          "text": "Set measurable goals for the program and specify your plans to communicate with the foundation during the grant period.",
+          "type": "textarea"
+        }
+      ]
+    },
+    {
+      "id": "capital-campaign-attachments",
+      "title": "Capital Campaign Attachments",
+      "description": "Supporting documents required for the capital campaign grant application.",
+      "questions": [
+        {
+          "id": "irs-determination-letter-capital",
+          "text": "Copy of the current IRS determination letter indicating 501(c)(3) tax-exempt status",
+          "type": "text"
+        },
+        {
+          "id": "payroll-tax-statement-capital",
+          "text": "Statement verifying payroll tax payments",
+          "type": "text"
+        },
+        {
+          "id": "organizational-structure-capital",
+          "text": "Organizational structure, including: List of officers and directors, including occupations, places of employment, and relevant affiliations; Description of board responsibilities, including committee assignments",
+          "type": "textarea"
+        },
+        {
+          "id": "financial-information-capital",
+          "text": "Financial information, including: Capital campaign budget; Describe your fundraising strategy by donor categories; list other foundation and corporate funders and the amounts committed or requested. Include all public funds and individual contributions supporting the project; Specify the amount to be raised from your board; Current board-approved annual operating budget, including expenses and income; Most recent audited annual financial statement; Letters of support (optional) that substantiate need for the campaign and collaboration with other organizations; Annual report, if available; Summary of most recent capital campaign, outlining the campaign goal, amount raised, board contributions, and beginning and ending dates",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "answers": {},
+  "created_at": "2025-05-22T21:35:17.452761",
+  "updated_at": "2025-05-22T21:36:49.430186",
+  "diagrams": [],
+  "generated_content": "\n    <h1>Custom Draft - 2025-05-22 21:35</h1>\n    <p><em>Generated on 2025-05-22T21:35:46.386867</em></p>\n    \n    <h2>Grant Proposal Overview</h2>\n    <p>This is a grant proposal based on the Custom - common-grant.pdf template. \n    Please fill out the questions in the editor and regenerate this content to get a complete proposal.</p>\n    \n    \n        <h2>Cover Sheet</h2>\n        <p>Basic information about the organization and the grant application.</p>\n        <p><em>Please answer the questions for Cover Sheet in the editor.</em></p>\n        <h2>Narrative</h2>\n        <p>Detailed description of the organization and the proposed project.</p>\n        <p><em>Please answer the questions for Narrative in the editor.</em></p>\n        <h2>Attachments</h2>\n        <p>Supporting documents required for the grant application.</p>\n        <p><em>Please answer the questions for Attachments in the editor.</em></p>\n        <h2>Budget</h2>\n        <p>Detailed breakdown of project expenses and income.</p>\n        <p><em>Please answer the questions for Budget in the editor.</em></p>\n        <h2>Capital Campaign Narrative</h2>\n        <p>Detailed description of the organization and the proposed capital campaign.</p>\n        <p><em>Please answer the questions for Capital Campaign Narrative in the editor.</em></p>\n        <h2>Capital Campaign Attachments</h2>\n        <p>Supporting documents required for the capital campaign grant application.</p>\n        <p><em>Please answer the questions for Capital Campaign Attachments in the editor.</em></p>"
+}

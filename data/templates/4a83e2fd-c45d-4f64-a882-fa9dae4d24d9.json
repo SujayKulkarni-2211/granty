@@ -1,0 +1,20 @@
+{
+  "id": "4a83e2fd-c45d-4f64-a882-fa9dae4d24d9",
+  "name": "Custom - common-grant.pdf",
+  "description": "Custom uploaded template",
+  "sections": [
+    {
+      "id": "c3a54c24-ea46-44e8-b9e2-b6ea25bed412",
+      "title": "Custom Section",
+      "description": "Section extracted from custom template",
+      "questions": [
+        {
+          "id": "bdedd7f2-5f23-498c-88d2-4aeef5c2a373",
+          "text": "Please provide content for this section",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "created_at": "2025-05-22T19:55:11.740840"
+}

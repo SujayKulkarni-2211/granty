@@ -1,0 +1,23 @@
+{
+  "id": "456a43c3-c539-4086-8c20-a1df3757ce52",
+  "title": "New Draft - 2025-05-22 20:00",
+  "template_id": "4a83e2fd-c45d-4f64-a882-fa9dae4d24d9",
+  "sections": [
+    {
+      "id": "c3a54c24-ea46-44e8-b9e2-b6ea25bed412",
+      "title": "Custom Section",
+      "description": "Section extracted from custom template",
+      "questions": [
+        {
+          "id": "bdedd7f2-5f23-498c-88d2-4aeef5c2a373",
+          "text": "Please provide content for this section",
+          "type": "textarea"
+        }
+      ]
+    }
+  ],
+  "answers": {},
+  "created_at": "2025-05-22T20:00:58.591028",
+  "updated_at": "2025-05-22T20:00:58.591028",
+  "diagrams": []
+}

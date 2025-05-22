@@ -2,3 +2,5 @@
 grantyenv
 granty.code-workspace
 __pycache__
+test.py
+test.ipynb

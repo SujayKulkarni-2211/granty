@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Find Grant Opportunities{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Find Grant Opportunities</h1>
+        <p class="lead" style="color: aliceblue;">Paste your business focus or upload a document to discover relevant
+            funding opportunities.</p>
+    </div>
+</div>
+
+{% if opportunities is defined %}
+{% if opportunities and opportunities|length > 0 %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Relevant Opportunities</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle"
+                        style="background-color: #23272b; color: #f8f9fa;">
+                        <thead style="background-color: #343a40; color: #f8f9fa;">
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Link</th>
+                                <th>Deadline</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for opp in opportunities %}
+                            <tr style="background-color: #23272b; color: #f8f9fa;">
+                                <td>{{ opp.title }}</td>
+                                <td>{{ opp.description }}</td>
+                                <td>
+                                    {% if opp.link %}
+                                    <a href="{{ opp.link }}" target="_blank" rel="noopener" style="color: #61dafb;">{{
+                                        opp.link }}</a>
+                                    {% else %}
+                                    N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ opp.deadline or 'N/A' }}</td>
+                                <td>{{ opp.remarks or '' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-warning mt-4" role="alert">
+    No opportunities found, check again later.
+</div>
+{% endif %}
+{% else %}
+<div class="row mt-4">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h5>Describe Your Business or Innovation</h5>
+            </div>
+            <div class="card-body">
+                <form action="/opportunities" method="post">
+                    <div class="mb-3">
+                        <label for="opportunity_content" class="form-label">Tell us about your startup, business focus,
+                            or
+                            innovation.</label>
+                        <textarea class="form-control" id="research_text" name="research_text" rows="7"
+                            placeholder="e.g. AI-powered logistics, sustainable packaging, fintech for underserved markets..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Find Opportunities</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h5>Upload a Document</h5>
+            </div>
+            <div class="card-body">
+                <p>Upload a PDF, TXT, or DOCX file describing your company, product, or project. We'll analyze it to
+                    match you with
+                    relevant grants and funding programs.</p>
+                <form action="/opportunities" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="opportunity_file" class="form-label">Select File</label>
+                        <input class="form-control" type="file" id="opportunity_file" name="opportunity_file"
+                            accept=".pdf,.txt,.docx">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload & Find</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

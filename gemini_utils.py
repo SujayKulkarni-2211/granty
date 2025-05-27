@@ -451,3 +451,51 @@ def generate_section_content(section, answers):
         <p>{section['description']}</p>
         <p><em>Error generating content for this section.</em></p>
         """
+    
+def get_opportunities(content):
+    """
+    Use Gemini to extract opportunities from the provided content
+    """
+    try:
+        print("DEBUG: Extracting opportunities from content...")
+        
+        # for using google search
+
+        prompt = f"""
+        You are an expert in finding/grant opportunities for start-ups or companies.
+        Analyze the following content and extract potential funding opportunities/pitching opportunities/competitions that are relevant to the context.
+        Content:
+        {content}
+        
+        Return a JSON array of opportunities, where each opportunity has:
+        - title: the opportunity/competition title
+        - description: a brief description of the opportunity
+        - link: a URL to more information
+        - deadline: the application deadline (if available)
+        - remarks: any additional notes or requirements
+
+        Use google search to find relevant and real time opportunities for the presnt day or future wrt the context.
+        
+        Format your response as a JSON array, nothing else.
+        """
+        model = genai.GenerativeModel()
+        response = model.generate_content(prompt)
+        print(f"DEBUG: Gemini response received, length: {len(response.text)} characters")
+        
+        # Clean and parse the response
+        response_text = response.text.strip()
+        if response_text.startswith('```json'):
+            response_text = response_text[7:]
+        if response_text.endswith('```'):
+            response_text = response_text[:-3]
+        
+        opportunities = json.loads(response_text)
+        
+        if isinstance(opportunities, list) and len(opportunities) > 0:
+            print(f"DEBUG: Successfully extracted opportunities")
+            return opportunities
+        
+    except Exception as e:
+        print(f"ERROR: Failed to extract opportunities: {e}")
+    
+    return []  # Return empty list if extraction fails

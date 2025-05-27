@@ -500,6 +500,44 @@ def export_draft(draft_id, format):
     else:
         return jsonify({'success': False, 'error': 'Unsupported format'})
 
+@app.route('/opportunities', methods=['GET', 'POST'])
+def opportunities():
+    if request.method == 'GET':
+        return render_template('opportunities.html')
+    elif request.method == 'POST':
+        content = ""
+        # Check if a file was uploaded
+        if 'opportunity_file' in request.files and request.files['opportunity_file'].filename != '':
+            file = request.files['opportunity_file']
+            if file.filename == '':
+                print("Empty filename")
+                return redirect(url_for('opportunities'))
+            filename = secure_filename(file.filename)
+            file_path = os.path.join('data/uploads', filename)
+            os.makedirs('data/uploads', exist_ok=True)
+            file.save(file_path)
+            print(f"File saved to: {file_path}")
+
+            if filename.lower().endswith('.pdf'):
+                print("Processing PDF file...")
+                content = extract_text_from_pdf(file_path)
+            else:
+                # For text files
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+            print(f"Extracted content length: {len(content)} characters")
+            
+        # check if there is content
+        if not content.strip():
+            print("No content provided in file")
+            content = request.form.get('research_text', '')
+        if content.strip():
+            # Process the content with Gemini
+            result = gemini_utils.get_opportunities(content)
+            return render_template('opportunities.html', opportunities=result)
+        # If neither, just reload page
+        return render_template('opportunities.html')
+
 if __name__ == '__main__':
     # Initialize with default templates if none exist
     if not os.path.exists('data/templates') or len(os.listdir('data/templates')) == 0:

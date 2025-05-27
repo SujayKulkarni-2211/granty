@@ -537,6 +537,123 @@ def opportunities():
             return render_template('opportunities.html', opportunities=result)
         # If neither, just reload page
         return render_template('opportunities.html')
+    
+@app.route('/payment/<draft_id>')
+def payment_page(draft_id):
+    """Display payment page with QR code"""
+    draft = storage.get_draft(draft_id)
+    if not draft:
+        return redirect(url_for('index'))
+    
+    # Generate unique payment ID for tracking
+    payment_id = f"PAY_{int(time.time())}_{random.randint(1000, 9999)}"
+    
+    # Store payment session
+    session['payment_id'] = payment_id
+    session['draft_id_for_payment'] = draft_id
+    session['payment_amount'] = 5  # ₹5
+    session['payment_status'] = 'pending'
+    
+    return render_template('payment.html', 
+                         draft=draft, 
+                         payment_id=payment_id,
+                         amount=5)
+
+@app.route('/verify-payment-new', methods=['POST'])
+def verify_payment_new():
+    """Simulate payment verification"""
+    try:
+        data = request.json
+        transaction_id = data.get('transaction_id', '').strip()
+        payment_id = session.get('payment_id')
+        draft_id = session.get('draft_id_for_payment')
+        
+        if not transaction_id:
+            return jsonify({
+                'success': False, 
+                'message': 'Please enter transaction ID'
+            })
+        
+        if not payment_id or not draft_id:
+            return jsonify({
+                'success': False, 
+                'message': 'Payment session expired. Please try again.'
+            })
+        
+        # Simple validation - check if transaction ID looks valid
+        if len(transaction_id) < 8:
+            return jsonify({
+                'success': False, 
+                'message': 'Invalid transaction ID. Please check and try again.'
+            })
+        
+        # For demo purposes, accept any transaction ID that's longer than 8 characters
+        # In real scenario, you'd verify with your payment processor
+        
+        # Mark payment as successful
+        session['payment_status'] = 'completed'
+        session['transaction_id'] = transaction_id
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Payment verified successfully!',
+            'transaction_id': transaction_id
+        })
+        
+    except Exception as e:
+        print(f"Payment verification error: {e}")
+        return jsonify({
+            'success': False, 
+            'message': 'Payment verification failed. Please try again.'
+        })
+
+@app.route('/download-pdf-new/<draft_id>')
+def download_pdf_new(draft_id):
+    """Download PDF after payment verification"""
+    try:
+        # Check payment status
+        if (session.get('payment_status') != 'completed' or 
+            session.get('draft_id_for_payment') != draft_id):
+            
+            return redirect(url_for('payment_page', draft_id=draft_id))
+        
+        # Get draft
+        draft = storage.get_draft(draft_id)
+        if not draft:
+            return jsonify({'error': 'Draft not found'}), 404
+        
+        # Check if content exists
+        content = draft.get('generated_content', '')
+        if not content:
+            return jsonify({'error': 'No content to download. Please generate content first.'}), 400
+        
+        # Generate PDF
+        pdf_path = generate_pdf_from_html(content, draft['title'])
+        if not pdf_path:
+            return jsonify({'error': 'Failed to generate PDF'}), 500
+        
+        # Clear payment session after successful download
+        session.pop('payment_status', None)
+        session.pop('payment_id', None)
+        session.pop('draft_id_for_payment', None)
+        session.pop('transaction_id', None)
+        
+        # Send file
+        return send_file(
+            pdf_path,
+            as_attachment=True,
+            download_name=f"{draft['title']}.pdf",
+            mimetype='application/pdf'
+        )
+        
+    except Exception as e:
+        print(f"PDF download error: {e}")
+        return jsonify({'error': 'Download failed. Please try again.'}), 500
+
+@app.route('/help')
+def help_page():
+    """Display help and support page"""
+    return render_template('help.html')
 
 if __name__ == '__main__':
     # Initialize with default templates if none exist

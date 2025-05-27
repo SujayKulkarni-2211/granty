@@ -593,7 +593,8 @@ function saveContentChanges() {
     });
 }
 
-// FIXED DOWNLOAD PDF FUNCTION
+// Replace the downloadPDF function in your preview.html with this:
+
 function downloadPDF() {
     console.log('Download PDF clicked!');
     
@@ -603,164 +604,28 @@ function downloadPDF() {
         return;
     }
     
-    try {
-        // Get modal element
-        const modalElement = document.getElementById('paymentModal');
-        console.log('Modal element found:', modalElement);
-        
-        if (!modalElement) {
-            console.error('Modal element not found!');
-            showAlert('❌ Modal not found! Please refresh the page.', 'danger');
-            return;
-        }
-        
-        // Check if Bootstrap is available
-        if (typeof bootstrap === 'undefined') {
-            console.error('Bootstrap not loaded!');
-            showAlert('❌ Bootstrap not loaded! Please refresh the page.', 'danger');
-            return;
-        }
-        
-        // Reset modal state
-        const paymentStatus = document.getElementById('payment-status');
-        const checkBtn = document.getElementById('check-payment-btn');
-        const couponInput = document.getElementById('coupon-code');
-        
-        if (paymentStatus) paymentStatus.style.display = 'none';
-        if (checkBtn) {
-            checkBtn.disabled = false;
-            checkBtn.innerHTML = '<i class="fas fa-check-circle"></i> I\'ve Made the Payment';
-        }
-        if (couponInput) couponInput.value = '';
-        
-        // Create and show modal
-        const modal = new bootstrap.Modal(modalElement, {
-            backdrop: true,
-            keyboard: true,
-            focus: true
-        });
-        
-        console.log('Showing modal...');
-        modal.show();
-        
-        // Add event listener for modal events
-        modalElement.addEventListener('shown.bs.modal', function() {
-            console.log('Modal shown successfully!');
-        });
-        
-        modalElement.addEventListener('hidden.bs.modal', function() {
-            console.log('Modal hidden');
-        });
-        
-    } catch (error) {
-        console.error('Error opening modal:', error);
-        showAlert('❌ Error opening payment modal: ' + error.message, 'danger');
-    }
-}
-
-function applyCoupon() {
-    const couponCode = document.getElementById('coupon-code').value.trim();
+    // Check for admin coupon first
+    const couponCode = prompt('Enter coupon code (or click Cancel to proceed with payment):');
     
-    if (!couponCode) {
-        showAlert('⚠️ Please enter a coupon code', 'warning');
+    if (couponCode && couponCode.toLowerCase() === 'grantyadmin') {
+        showAlert('🎉 Admin coupon applied! Starting free download...', 'success');
+        
+        // Direct download with coupon
+        const link = document.createElement('a');
+        link.href = `/api/download-pdf/${draftId}?coupon=grantyadmin`;
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showAlert('✅ Free download completed!', 'success');
         return;
     }
     
-    if (couponCode.toLowerCase() === 'grantyadmin') {
-        const modalElement = document.getElementById('paymentModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        if (modal) modal.hide();
-        
-        showAlert('🎉 Admin coupon applied! Starting free download...', 'success');
-        setTimeout(() => startDownload(true), 1500);
-    } else {
-        showAlert('❌ Invalid coupon code', 'danger');
-    }
+    // Redirect to payment page
+    window.location.href = `/payment/${draftId}`;
 }
 
-function checkPaymentStatus() {
-    const checkBtn = document.getElementById('check-payment-btn');
-    const paymentStatus = document.getElementById('payment-status');
-    
-    if (checkBtn) {
-        checkBtn.disabled = true;
-        checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking Payment...';
-    }
-    
-    if (paymentStatus) {
-        paymentStatus.style.display = 'block';
-    }
-    
-    // Simulate payment verification process
-    setTimeout(() => {
-        try {
-            // Hide payment modal
-            const paymentModalElement = document.getElementById('paymentModal');
-            const paymentModal = bootstrap.Modal.getInstance(paymentModalElement);
-            if (paymentModal) paymentModal.hide();
-            
-            // Generate random transaction ID
-            const transactionId = 'TXN' + Date.now().toString().slice(-8) + Math.random().toString(36).substr(2, 4).toUpperCase();
-            const transactionElement = document.getElementById('transaction-id');
-            if (transactionElement) {
-                transactionElement.textContent = transactionId;
-            }
-            
-            // Show success modal
-            const successModalElement = document.getElementById('successModal');
-            if (successModalElement) {
-                const successModal = new bootstrap.Modal(successModalElement);
-                successModal.show();
-            }
-            
-            showAlert('🎉 Payment verified successfully!', 'success');
-        } catch (error) {
-            console.error('Error in payment verification:', error);
-            showAlert('❌ Error verifying payment: ' + error.message, 'danger');
-        }
-    }, 3000);
-}
 
-function startDownload(isFree = false) {
-    const url = `/api/download-pdf/${draftId}${isFree ? '?coupon=grantyadmin' : ''}`;
-    
-    showAlert('📥 Starting PDF download...', 'info');
-    
-    // Create download link
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = '';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    // Close success modal
-    const successModalElement = document.getElementById('successModal');
-    const successModal = bootstrap.Modal.getInstance(successModalElement);
-    if (successModal) successModal.hide();
-    
-    showAlert('✅ Download completed!', 'success');
-}
-
-function showAlert(message, type) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-    alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
-    `;
-    
-    document.body.appendChild(alertDiv);
-    setTimeout(() => {
-        if (alertDiv.parentNode) alertDiv.parentNode.removeChild(alertDiv);
-    }, 5000);
-}
-
-// Test function - you can call this in browser console to test modal
-function testModal() {
-    console.log('Testing modal...');
-    downloadPDF();
-}
 </script>
 {% endblock %}

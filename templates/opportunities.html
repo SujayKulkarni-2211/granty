@@ -2,6 +2,15 @@
 
 {% block title %}Find Grant Opportunities{% endblock %}
 
+{% block styles %}
+<style>
+    .table>:not(caption)>*>* {
+        background-color: #23272b00 !important;
+        color: aliceblue !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-12">
@@ -20,10 +29,10 @@
                 <h5>Relevant Opportunities</h5>
             </div>
             <div class="card-body">
-                <div class="table-responsive">
+                <div class="table-responsive" style="background-color: #23272b00;">
                     <table class="table table-bordered table-hover align-middle"
-                        style="background-color: #23272b; color: #f8f9fa;">
-                        <thead style="background-color: #343a40; color: #f8f9fa;">
+                        style="background-color: #23272b00; color: #f8f9fa;">
+                        <thead style="background-color: #343a4000; color: #f8f9fa;">
                             <tr>
                                 <th>Title</th>
                                 <th>Description</th>
@@ -34,7 +43,7 @@
                         </thead>
                         <tbody>
                             {% for opp in opportunities %}
-                            <tr style="background-color: #23272b; color: #f8f9fa;">
+                            <tr style="background-color: #23272b00; color: #f8f9fa;">
                                 <td>{{ opp.title }}</td>
                                 <td>{{ opp.description }}</td>
                                 <td>

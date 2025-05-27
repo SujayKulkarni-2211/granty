@@ -2,16 +2,31 @@
 
 {% block title %}Grant Editor - {{ draft.title }}{% endblock %}
 
+{% block styles %}
+
+
+<style>
+    .list-group-item{
+        background-color:rgba(71, 61, 139, 0) !important;
+        color: aliceblue !important;
+    }
+</style>
+
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-12 d-flex justify-content-between align-items-center">
         <h1>{{ draft.title }}</h1>
         <div class="btn-group" role="group">
-            <a href="/diagrams/{{ draft.id }}" class="btn btn-outline-primary">Diagrams</a>
+            
             <a href="/preview/{{ draft.id }}" class="btn btn-success">Preview & Generate</a>
         </div>
     </div>
 </div>
+
+
+
 
 <div class="row mt-4">
     <div class="col-md-3">
@@ -69,7 +84,7 @@
 <!-- Hidden section templates -->
 {% for section in draft.sections %}
 <div id="section-{{ section.id }}" class="section-template" style="display: none;">
-    <div class="alert alert-info">
+    <div class="alert">
         <h5>📋 {{ section.title }}</h5>
         <p class="mb-0">{{ section.description }}</p>
         <small class="text-muted">💡 Sample answers are provided below - feel free to edit them according to your project!</small>

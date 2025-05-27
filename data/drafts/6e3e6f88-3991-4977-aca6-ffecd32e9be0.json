@@ -1,0 +1,363 @@
+{
+  "id": "6e3e6f88-3991-4977-aca6-ffecd32e9be0",
+  "title": "Custom Draft - 2025-05-27 19:57",
+  "template_id": "0511b9b9-de1c-40d4-8faa-551ee5bb73ab",
+  "sections": [
+    {
+      "id": "cover-sheet",
+      "title": "Cover Sheet",
+      "description": "Basic information about the organization and the grant application.",
+      "questions": [
+        {
+          "id": "date-of-application",
+          "text": "Date of Application",
+          "type": "text",
+          "sample_answer": "October 26, 2023"
+        },
+        {
+          "id": "legal-name-of-organization",
+          "text": "Legal Name of Organization Applying",
+          "type": "text",
+          "sample_answer": "Community Support Services, Inc."
+        },
+        {
+          "id": "year-founded",
+          "text": "Year Founded",
+          "type": "text",
+          "sample_answer": "1985"
+        },
+        {
+          "id": "current-annual-operating-budget",
+          "text": "Current Annual Operating Budget",
+          "type": "text",
+          "sample_answer": "$500,000"
+        },
+        {
+          "id": "united-way-funding",
+          "text": "Are you currently receiving United Way Program Funding? Identify programs and amount:",
+          "type": "textarea",
+          "sample_answer": "Yes. We receive $25,000 annually for our Youth Mentoring Program and $15,000 for our Emergency Food Assistance Program."
+        },
+        {
+          "id": "executive-director",
+          "text": "Executive Director",
+          "type": "text",
+          "sample_answer": "Jane Doe"
+        },
+        {
+          "id": "contact-person",
+          "text": "Contact Person/Title (if different from Executive Director)",
+          "type": "text",
+          "sample_answer": "John Smith, Program Manager"
+        },
+        {
+          "id": "principal-address",
+          "text": "Address (principal/administrative office)",
+          "type": "text",
+          "sample_answer": "123 Main Street, Suite 400"
+        },
+        {
+          "id": "mailing-address",
+          "text": "Mailing Address, if different from above",
+          "type": "text",
+          "sample_answer": "Same as above"
+        },
+        {
+          "id": "city-state-zip",
+          "text": "City, State, Zip",
+          "type": "text",
+          "sample_answer": "Anytown, CA 91234"
+        },
+        {
+          "id": "phone-number",
+          "text": "Phone Number",
+          "type": "text",
+          "sample_answer": "(555) 123-4567"
+        },
+        {
+          "id": "fax-number",
+          "text": "Fax Number",
+          "type": "text",
+          "sample_answer": "(555) 123-4568"
+        },
+        {
+          "id": "project-name",
+          "text": "Project Name",
+          "type": "text",
+          "sample_answer": "Community Garden Initiative"
+        },
+        {
+          "id": "purpose-of-grant",
+          "text": "Purpose of Grant (one sentence)",
+          "type": "textarea",
+          "sample_answer": "To establish a community garden to provide fresh produce to food-insecure families and create a space for community engagement."
+        },
+        {
+          "id": "project-dates",
+          "text": "Beginning and Ending Dates of the Project/Campaign",
+          "type": "text",
+          "sample_answer": "January 1, 2024 - December 31, 2024"
+        },
+        {
+          "id": "amount-requested",
+          "text": "Amount Requested",
+          "type": "text",
+          "sample_answer": "$50,000"
+        },
+        {
+          "id": "total-project-cost",
+          "text": "Total Project Cost",
+          "type": "text",
+          "sample_answer": "$75,000"
+        },
+        {
+          "id": "geographic-area-served",
+          "text": "Geographic Area Served",
+          "type": "text",
+          "sample_answer": "Anytown, CA"
+        }
+      ]
+    },
+    {
+      "id": "narrative-section-a",
+      "title": "Narrative Section A",
+      "description": "Detailed description of the organization and the proposed project.",
+      "questions": [
+        {
+          "id": "organization-summary",
+          "text": "Summarize your organization\u2019s history.",
+          "type": "textarea",
+          "sample_answer": "Community Support Services, Inc. (CSS) was founded in 1985 with a mission to combat food insecurity and promote community health in Anytown, CA.  Over the years, we've expanded our services to include youth mentoring, emergency food assistance, and community education programs. We have a strong track record of successful community initiatives and dedicated partnerships."
+        },
+        {
+          "id": "mission-goals-challenges",
+          "text": "State your mission and goals, future challenges, and long-range plans.",
+          "type": "textarea",
+          "sample_answer": "Our mission is to empower individuals and families in Anytown to achieve food security and overall well-being. Our goals include expanding access to healthy food, strengthening community bonds, and creating sustainable programs for long-term impact.  Future challenges include securing stable funding and addressing the growing need for our services. Our long-range plan is to establish a network of community gardens throughout the city."
+        },
+        {
+          "id": "current-programs-activities",
+          "text": "Outline current programs and activities.",
+          "type": "textarea",
+          "sample_answer": "Currently, CSS operates three key programs: the Emergency Food Pantry, providing immediate food assistance; the Youth Mentoring Program, pairing at-risk youth with adult mentors; and the Community Health Education Program, offering workshops on nutrition and healthy living.  These programs are supported by a dedicated team of staff, volunteers, and community partners."
+        },
+        {
+          "id": "accomplishments",
+          "text": "Highlight accomplishments.",
+          "type": "textarea",
+          "sample_answer": "In the past year, CSS served over 500 families through the Emergency Food Pantry, mentored 75 youth, and conducted 12 community health workshops.  We successfully secured a new partnership with a local supermarket to receive donated food items, significantly improving the quality and quantity of food we can offer."
+        },
+        {
+          "id": "differentiate-from-others",
+          "text": "TIP: Differentiate yourself from similar or competing organizations",
+          "type": "textarea",
+          "sample_answer": "While other organizations in Anytown address food insecurity, CSS distinguishes itself through our holistic approach, combining direct food assistance with youth mentoring and community education. This integrated model tackles the root causes of food insecurity and empowers individuals for long-term success. We also actively cultivate strong partnerships with local businesses and organizations to maximize our impact."
+        },
+        {
+          "id": "project-description",
+          "text": "Describe the proposed program or project.",
+          "type": "textarea",
+          "sample_answer": "The Community Garden Initiative will establish a vibrant community garden on a city-owned plot of land.  This garden will be a source of fresh, healthy produce for local food banks and families in need, and will also serve as a hub for community engagement, fostering social interaction, education, and skill development."
+        },
+        {
+          "id": "needs-problems-addressed",
+          "text": "Identify the needs/problems to be addressed, target population and number of people to be served by the project.",
+          "type": "textarea",
+          "sample_answer": "This project directly addresses the critical need for increased access to fresh, nutritious food in Anytown, particularly among low-income families.  The target population is food-insecure families and individuals in the Anytown area, with a projected service reach of at least 200 families within the first year."
+        },
+        {
+          "id": "project-goals-objectives",
+          "text": "Describe the project goals and objectives, and your plan to meet them.",
+          "type": "textarea",
+          "sample_answer": "Our primary goal is to cultivate and distribute at least 5,000 pounds of fresh produce annually.  To achieve this, we will develop raised garden beds, establish a composting system, recruit volunteers, and provide gardening education workshops. We will also collaborate with local food banks to ensure efficient distribution of the produce."
+        },
+        {
+          "id": "new-or-continuing-program",
+          "text": "Define the project as a new or continuing program.",
+          "type": "text",
+          "sample_answer": "New"
+        },
+        {
+          "id": "participating-organizations",
+          "text": "Identify other organizations, partners or funders participating in the project and their roles.",
+          "type": "textarea",
+          "sample_answer": "We are partnering with the Anytown Parks and Recreation Department, which is providing the land and some initial landscaping support.  We are also working with local food banks to ensure efficient distribution of the harvested produce and are seeking additional funding from other foundations and private donors."
+        },
+        {
+          "id": "implementation-timetable",
+          "text": "Provide a timetable for implementation.",
+          "type": "textarea",
+          "sample_answer": "Phase 1 (Jan-Mar): Site preparation, garden bed construction, securing permits. Phase 2 (Apr-June): Planting, volunteer recruitment, and educational workshops. Phase 3 (Jul-Dec): Harvesting, distribution of produce, program evaluation."
+        },
+        {
+          "id": "long-term-funding",
+          "text": "Identify long-term funding resources.",
+          "type": "textarea",
+          "sample_answer": "We plan to explore grant opportunities from other foundations, seek corporate sponsorships, and develop a fundraising plan to achieve long-term financial sustainability. We also plan to generate revenue through the sale of excess produce at farmers\u2019 markets."
+        },
+        {
+          "id": "similar-program-impact",
+          "text": "TIP: If a similar program or service has been conducted by your organization or another, please discuss its impact. Does it represent an expansion or duplication of services in your area? If it doesn\u2019t, define its potential to serve as a model program locally or nationally.",
+          "type": "textarea",
+          "sample_answer": "This is a new initiative for CSS, however it builds upon our existing food assistance and community engagement programs. We believe this model of combining food production with community building has the potential to serve as a model for other organizations facing similar challenges in addressing food insecurity and promoting community health."
+        },
+        {
+          "id": "evaluation-plan",
+          "text": "Describe your plan to document progress and results.",
+          "type": "textarea",
+          "sample_answer": "We will track the amount of produce harvested and distributed, the number of families served, and the level of community participation throughout the project.  We will submit interim and final reports detailing our progress, outcomes, and expenditure details according to the grant requirements. We will also conduct post-project surveys to assess the impact of the garden on community health and well-being."
+        }
+      ]
+    },
+    {
+      "id": "attachments-section-b",
+      "title": "Attachments Section B",
+      "description": "Supporting documents required for the grant application.",
+      "questions": [
+        {
+          "id": "irs-determination-letter",
+          "text": "Copy of the current IRS determination letter indicating 501(c)(3) tax-exempt status.",
+          "type": "text",
+          "sample_answer": "Attached"
+        },
+        {
+          "id": "payroll-tax-payments",
+          "text": "Statement verifying payroll tax payments.",
+          "type": "text",
+          "sample_answer": "Attached"
+        },
+        {
+          "id": "organizational-structure",
+          "text": "Organizational structure, including: List of officers and directors, including occupations, places of employment, and relevant affiliations; Description of board responsibilities, including committee assignments; Resumes and/or job descriptions of key personnel involved in the project.",
+          "type": "text",
+          "sample_answer": "Attached"
+        },
+        {
+          "id": "finances",
+          "text": "Finances, including: Grant budget; List of other funders, potential funders and amounts committed or requested, including public contracts, individual contributions and other sources of income supporting the project; Current board-approved annual operating budget, including expenses and income; Most recent audited annual financial statement; Letters of support (optional) that substantiate need for the project and collaboration with other organizations; Annual report, if available.",
+          "type": "text",
+          "sample_answer": "Attached"
+        }
+      ]
+    },
+    {
+      "id": "budget",
+      "title": "Budget",
+      "description": "Detailed budget breakdown for the proposed project.",
+      "questions": [
+        {
+          "id": "budget-period",
+          "text": "Please specify the budget period (e.g. January 1, 1996 to December 30, 1996).",
+          "type": "text",
+          "sample_answer": "January 1, 2024 - December 31, 2024"
+        },
+        {
+          "id": "expenses-itemization",
+          "text": "Please itemize the following expenses. Be sure to include any additional items relevant to your particular program. Provide an expense total.",
+          "type": "textarea",
+          "sample_answer": "A detailed breakdown of expenses, including salaries, payroll taxes, fringe benefits, consultant fees, travel, equipment, supplies, printing, telephone, postage, rent, utilities, and in-kind contributions, will be provided in a separate budget document.  The total project expenses are estimated to be $75,000."
+        },
+        {
+          "id": "income-sources",
+          "text": "Please include all confirmed and anticipated sources of revenue, and indicate their status. Provide an income total.",
+          "type": "textarea",
+          "sample_answer": "Confirmed income includes this grant application for $50,000 and in-kind donations from the Anytown Parks and Recreation Department for land preparation valued at $5,000.  Anticipated income includes $10,000 from individual donations, $10,000 from corporate sponsorships, which are currently being pursued.  The total projected income is $75,000."
+        }
+      ]
+    },
+    {
+      "id": "capital-campaign-narrative",
+      "title": "Narrative Section (Capital Campaign)",
+      "description": "Information specific to a capital campaign.",
+      "questions": [
+        {
+          "id": "capital-campaign-description",
+          "text": "Describe the proposed campaign, including goals and objectives.",
+          "type": "textarea",
+          "sample_answer": "This capital campaign aims to raise $1 million to build a new community center that will provide expanded space for our existing programs and create additional opportunities for community engagement. Objectives include securing a suitable location, managing construction, and ensuring long-term sustainability of the new facility."
+        },
+        {
+          "id": "capital-campaign-need",
+          "text": "Identify the need/problem to be addressed, target population and number of people to be served by the project.",
+          "type": "textarea",
+          "sample_answer": "Our current facility is overcrowded and lacks adequate space to accommodate the growing demand for our services. This limits our ability to expand programs and serve more people.  The new community center will address this by providing more space for our programs, allowing us to serve a larger and more diverse population."
+        },
+        {
+          "id": "capital-campaign-leadership",
+          "text": "List the campaign leadership, their strengths and affiliations.",
+          "type": "textarea",
+          "sample_answer": "Our campaign leadership includes [names and titles], who bring extensive experience in fundraising, community development, and non-profit management. Their strong community connections and fundraising expertise will play a key role in campaign success."
+        },
+        {
+          "id": "capital-campaign-evaluation",
+          "text": "Describe your plan to document progress and results.",
+          "type": "textarea",
+          "sample_answer": "We will track donations, monitor campaign expenses, and regularly update the campaign leadership on our progress. Regular reports will be submitted to the grant provider, and a final report summarizing the campaign results, including total funds raised, will be provided upon completion."
+        }
+      ]
+    },
+    {
+      "id": "capital-campaign-attachments",
+      "title": "Attachments Section (Capital Campaign)",
+      "description": "Documents for capital campaign applications.",
+      "questions": [
+        {
+          "id": "capital-campaign-attachments",
+          "text": "Please include the following attachments in the order indicated: Copy of the current IRS determination letter indicating 501(c)(3) tax-exempt status; Statement verifying payroll tax payments; Organizational structure, including: List of officers and directors, including occupations, places of employment, and relevant affiliations; Description of board responsibilities, including committee assignments; Financial information, including: Capital campaign budget; Describe your fundraising strategy by donor categories; list other foundation and corporate funders and the amounts committed or requested. Include all public funds and individual contributions supporting the project; Specify the amount to be raised from your board; Current board-approved annual operating budget, including expenses and income; Most recent audited annual financial statement; Letters of support (optional) that substantiate need for the campaign and collaboration with other organizations; Annual report, if available; Summary of most recent capital campaign, outlining the campaign goal, amount raised, board contributions, and beginning and ending dates.",
+          "type": "text",
+          "sample_answer": "Attached"
+        }
+      ]
+    }
+  ],
+  "answers": {
+    "date-of-application": "October 26, 2023",
+    "legal-name-of-organization": "Community Support Services, Inc.",
+    "year-founded": "1985",
+    "current-annual-operating-budget": "$500,000",
+    "united-way-funding": "Yes. We receive $25,000 annually for our Youth Mentoring Program and $15,000 for our Emergency Food Assistance Program.",
+    "executive-director": "Jane Doe",
+    "contact-person": "John Smith, Program Manager",
+    "principal-address": "123 Main Street, Suite 400",
+    "mailing-address": "Same as above",
+    "city-state-zip": "Anytown, CA 91234",
+    "phone-number": "(555) 123-4567",
+    "fax-number": "(555) 123-4568",
+    "project-name": "Community Garden Initiative",
+    "purpose-of-grant": "To establish a community garden to provide fresh produce to food-insecure families and create a space for community engagement.",
+    "project-dates": "January 1, 2024 - December 31, 2024",
+    "amount-requested": "$50,000",
+    "total-project-cost": "$75,000",
+    "geographic-area-served": "Anytown, CA",
+    "organization-summary": "Community Support Services, Inc. (CSS) was founded in 1985 with a mission to combat food insecurity and promote community health in Anytown, CA.  Over the years, we've expanded our services to include youth mentoring, emergency food assistance, and community education programs. We have a strong track record of successful community initiatives and dedicated partnerships.",
+    "mission-goals-challenges": "Our mission is to empower individuals and families in Anytown to achieve food security and overall well-being. Our goals include expanding access to healthy food, strengthening community bonds, and creating sustainable programs for long-term impact.  Future challenges include securing stable funding and addressing the growing need for our services. Our long-range plan is to establish a network of community gardens throughout the city.",
+    "current-programs-activities": "Currently, CSS operates three key programs: the Emergency Food Pantry, providing immediate food assistance; the Youth Mentoring Program, pairing at-risk youth with adult mentors; and the Community Health Education Program, offering workshops on nutrition and healthy living.  These programs are supported by a dedicated team of staff, volunteers, and community partners.",
+    "accomplishments": "In the past year, CSS served over 500 families through the Emergency Food Pantry, mentored 75 youth, and conducted 12 community health workshops.  We successfully secured a new partnership with a local supermarket to receive donated food items, significantly improving the quality and quantity of food we can offer.",
+    "differentiate-from-others": "While other organizations in Anytown address food insecurity, CSS distinguishes itself through our holistic approach, combining direct food assistance with youth mentoring and community education. This integrated model tackles the root causes of food insecurity and empowers individuals for long-term success. We also actively cultivate strong partnerships with local businesses and organizations to maximize our impact.",
+    "project-description": "The Community Garden Initiative will establish a vibrant community garden on a city-owned plot of land.  This garden will be a source of fresh, healthy produce for local food banks and families in need, and will also serve as a hub for community engagement, fostering social interaction, education, and skill development.",
+    "needs-problems-addressed": "This project directly addresses the critical need for increased access to fresh, nutritious food in Anytown, particularly among low-income families.  The target population is food-insecure families and individuals in the Anytown area, with a projected service reach of at least 200 families within the first year.",
+    "project-goals-objectives": "Our primary goal is to cultivate and distribute at least 5,000 pounds of fresh produce annually.  To achieve this, we will develop raised garden beds, establish a composting system, recruit volunteers, and provide gardening education workshops. We will also collaborate with local food banks to ensure efficient distribution of the produce.",
+    "new-or-continuing-program": "New",
+    "participating-organizations": "We are partnering with the Anytown Parks and Recreation Department, which is providing the land and some initial landscaping support.  We are also working with local food banks to ensure efficient distribution of the harvested produce and are seeking additional funding from other foundations and private donors.",
+    "implementation-timetable": "Phase 1 (Jan-Mar): Site preparation, garden bed construction, securing permits. Phase 2 (Apr-June): Planting, volunteer recruitment, and educational workshops. Phase 3 (Jul-Dec): Harvesting, distribution of produce, program evaluation.",
+    "long-term-funding": "We plan to explore grant opportunities from other foundations, seek corporate sponsorships, and develop a fundraising plan to achieve long-term financial sustainability. We also plan to generate revenue through the sale of excess produce at farmers\u2019 markets.",
+    "similar-program-impact": "This is a new initiative for CSS, however it builds upon our existing food assistance and community engagement programs. We believe this model of combining food production with community building has the potential to serve as a model for other organizations facing similar challenges in addressing food insecurity and promoting community health.",
+    "evaluation-plan": "We will track the amount of produce harvested and distributed, the number of families served, and the level of community participation throughout the project.  We will submit interim and final reports detailing our progress, outcomes, and expenditure details according to the grant requirements. We will also conduct post-project surveys to assess the impact of the garden on community health and well-being.",
+    "irs-determination-letter": "Attached",
+    "payroll-tax-payments": "Attached",
+    "organizational-structure": "Attached",
+    "finances": "Attached",
+    "budget-period": "January 1, 2024 - December 31, 2024",
+    "expenses-itemization": "A detailed breakdown of expenses, including salaries, payroll taxes, fringe benefits, consultant fees, travel, equipment, supplies, printing, telephone, postage, rent, utilities, and in-kind contributions, will be provided in a separate budget document.  The total project expenses are estimated to be $75,000.",
+    "income-sources": "Confirmed income includes this grant application for $50,000 and in-kind donations from the Anytown Parks and Recreation Department for land preparation valued at $5,000.  Anticipated income includes $10,000 from individual donations, $10,000 from corporate sponsorships, which are currently being pursued.  The total projected income is $75,000.",
+    "capital-campaign-description": "This capital campaign aims to raise $1 million to build a new community center that will provide expanded space for our existing programs and create additional opportunities for community engagement. Objectives include securing a suitable location, managing construction, and ensuring long-term sustainability of the new facility.",
+    "capital-campaign-need": "Our current facility is overcrowded and lacks adequate space to accommodate the growing demand for our services. This limits our ability to expand programs and serve more people.  The new community center will address this by providing more space for our programs, allowing us to serve a larger and more diverse population.",
+    "capital-campaign-leadership": "Our campaign leadership includes [names and titles], who bring extensive experience in fundraising, community development, and non-profit management. Their strong community connections and fundraising expertise will play a key role in campaign success.",
+    "capital-campaign-evaluation": "We will track donations, monitor campaign expenses, and regularly update the campaign leadership on our progress. Regular reports will be submitted to the grant provider, and a final report summarizing the campaign results, including total funds raised, will be provided upon completion.",
+    "capital-campaign-attachments": "Attached"
+  },
+  "created_at": "2025-05-27T19:57:53.274149",
+  "updated_at": "2025-05-27T19:57:53.274149",
+  "diagrams": [],
+  "generated_content": null
+}

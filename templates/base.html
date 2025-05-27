@@ -35,6 +35,143 @@
             min-height: 100vh;
         }
 
+        /* Universal Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+        }
+
+        .preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            max-width: 90vw;
+        }
+
+        .loader-title {
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            margin-bottom: 1rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .loader-subtitle {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-bottom: 2rem;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        .document-loader {
+            width: clamp(80px, 15vw, 120px);
+            height: clamp(100px, 20vw, 160px);
+            background-color: #fff;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            margin: 0 auto 30px;
+        }
+
+        .document-loader::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: var(--primary);
+            top: 0;
+            left: 0;
+        }
+
+        .document-loader::after {
+            content: '';
+            position: absolute;
+            width: 0%;
+            height: 4px;
+            background: var(--accent);
+            bottom: 0;
+            left: 0;
+            animation: writing 3s linear infinite;
+        }
+
+        .document-line {
+            position: absolute;
+            height: 3px;
+            background-color: #e0e0e0;
+            left: 10px;
+            right: 10px;
+            border-radius: 3px;
+        }
+
+        .document-line:nth-child(1) { top: 30px; width: 80%; }
+        .document-line:nth-child(2) { top: 45px; width: 90%; }
+        .document-line:nth-child(3) { top: 60px; width: 70%; }
+        .document-line:nth-child(4) { top: 75px; width: 85%; }
+        .document-line:nth-child(5) { top: 90px; width: 60%; }
+        .document-line:nth-child(6) { top: 105px; width: 75%; }
+        .document-line:nth-child(7) { top: 120px; width: 65%; }
+        .document-line:nth-child(8) { top: 135px; width: 40%; }
+
+        .typing-cursor {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background-color: var(--primary);
+            bottom: 10px;
+            left: 10px;
+            animation: typing 3s linear infinite;
+        }
+
+        @keyframes typing {
+            0% { left: 10px; }
+            25% { left: 90px; }
+            50% { left: 40px; }
+            75% { left: 100px; }
+            100% { left: 10px; }
+        }
+
+        @keyframes writing {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+
+        .loader-progress {
+            width: clamp(150px, 40vw, 200px);
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loader-progress-bar {
+            height: 100%;
+            width: 0;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
         /* Universe Background */
         .universe-bg {
             position: fixed;
@@ -74,6 +211,32 @@
             }
         }
 
+        .shooting-star {
+            position: absolute;
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+            transform: rotate(var(--angle));
+            animation: shooting var(--duration) linear infinite;
+            animation-delay: var(--delay);
+            opacity: 0;
+            z-index: -1;
+        }
+
+        @keyframes shooting {
+            0% {
+                transform: translateX(-100px) rotate(var(--angle));
+                opacity: 1;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(calc(100vw + 100px)) rotate(var(--angle));
+                opacity: 0;
+            }
+        }
+
         /* Header Styles */
         .navbar {
             background-color: rgba(15, 12, 41, 0.95) !important;
@@ -81,6 +244,17 @@
             backdrop-filter: blur(10px);
             border: none;
             padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 10px 0;
+            background-color: rgba(15, 12, 41, 0.98) !important;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
 
         .navbar-brand {
@@ -92,6 +266,10 @@
 
         .navbar-brand span {
             color: var(--accent);
+        }
+
+        .navbar-nav {
+            margin-left: auto;
         }
 
         .navbar-nav .nav-link {
@@ -285,81 +463,6 @@
             color: rgba(255, 255, 255, 0.6) !important;
         }
 
-        /* Alerts */
-        .alert {
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .alert-info {
-            background: rgba(52, 152, 219, 0.1);
-            border-color: rgba(52, 152, 219, 0.3);
-            color: white;
-        }
-
-        .alert-success {
-            background: rgba(46, 204, 113, 0.1);
-            border-color: rgba(46, 204, 113, 0.3);
-            color: white;
-        }
-
-        .alert-warning {
-            background: rgba(243, 156, 18, 0.1);
-            border-color: rgba(243, 156, 18, 0.3);
-            color: white;
-        }
-
-        .alert-danger {
-            background: rgba(231, 76, 60, 0.1);
-            border-color: rgba(231, 76, 60, 0.3);
-            color: white;
-        }
-
-        /* List Groups */
-        .list-group-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 10px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .list-group-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(76, 201, 240, 0.3);
-            transform: translateX(5px);
-        }
-
-        .list-group-item.active {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-color: var(--accent);
-        }
-
-        /* Badge */
-        .badge {
-            border-radius: 20px;
-            padding: 6px 12px;
-        }
-
-        /* Modal */
-        .modal-content {
-            background: rgba(15, 12, 41, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-        }
-
-        .modal-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .modal-body {
-            color: rgba(255, 255, 255, 0.9);
-        }
-
         /* Floating Elements */
         .floating-element {
             position: absolute;
@@ -414,6 +517,28 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
+    <!-- Universal Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="loader-content">
+            <h2 class="loader-title">grant<span style="color: var(--accent);">Y</span></h2>
+            <p class="loader-subtitle">Launching your grant writing universe...</p>
+            <div class="document-loader">
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="document-line"></div>
+                <div class="typing-cursor"></div>
+            </div>
+            <div class="loader-progress">
+                <div class="loader-progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Universe Background -->
     <div class="universe-bg"></div>
     <div id="stars-container"></div>
@@ -423,14 +548,14 @@
     <div class="floating-element floating-2"></div>
 
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark" id="navbar">
         <div class="container">
             <a class="navbar-brand" href="/">grant<span style="color: var(--accent);">Y</span></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
                     </li>
@@ -441,6 +566,9 @@
                         <a class="nav-link" href="/templates"><i class="fas fa-layer-group"></i> Templates</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/opportunities"><i class="fas fa-search"></i> Opportunities</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="/help"><i class="fas fa-question-circle"></i> Help</a>
                     </li>
                 </ul>
@@ -449,10 +577,8 @@
     </nav>
 
     <!-- Main Content -->
-    <div class="container mt-4">
-        <div class="main-container">
-            {% block content %}{% endblock %}
-        </div>
+    <div class="container mt-4" style="padding-top: 80px;">
+        {% block content %}{% endblock %}
     </div>
 
     <!-- Footer -->
@@ -460,7 +586,7 @@
         <div class="container text-center">
             <p class="mb-0">
                 <span style="font-size: 18px; font-weight: 600;">grant<span style="color: var(--accent);">Y</span></span>
-                - AI-Powered Grant Writing Assistant &copy; 2023
+                - AI-Powered Grant Writing Assistant &copy; 2025
             </p>
             <p class="mt-2" style="color: rgba(255, 255, 255, 0.6);">
                 <small>Empowering researchers with intelligent grant writing solutions</small>
@@ -471,11 +597,47 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Create Stars Background
+        // Universal Preloader with proper progress simulation
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader');
+            const progressBar = document.getElementById('progress-bar');
+            let progress = 0;
+            
+            // Prevent scrolling during preloader
+            document.body.style.overflow = 'hidden';
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5; // More consistent progress
+                if (progress > 100) progress = 100;
+                progressBar.style.width = progress + '%';
+                
+                if (progress === 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        preloader.classList.add('fade-out');
+                        setTimeout(() => {
+                            preloader.style.display = 'none';
+                            document.body.style.overflow = ''; // Restore scrolling
+                        }, 500);
+                    }, 800); // Longer pause to show completion
+                }
+            }, 150);
+            
+            // Minimum 3 seconds display time
+            setTimeout(() => {
+                if (progress < 100) {
+                    progress = 100;
+                    progressBar.style.width = '100%';
+                }
+            }, 3000);
+        });
+
+        // Create Stars and Shooting Stars Background
         function createStars() {
             const starsContainer = document.getElementById('stars-container');
-            const starsCount = 100;
+            const starsCount = 200;
             
+            // Create regular stars
             for (let i = 0; i < starsCount; i++) {
                 const star = document.createElement('div');
                 star.classList.add('star');
@@ -485,7 +647,7 @@
                 const y = Math.random() * 100;
                 
                 // Random size
-                const size = Math.random() * 2 + 1;
+                const size = Math.random() * 3;
                 
                 // Random opacity and duration for twinkling
                 const opacity = Math.random() * 0.7 + 0.3;
@@ -500,11 +662,60 @@
                 
                 starsContainer.appendChild(star);
             }
+            
+            // Add shooting stars
+            for (let i = 0; i < 5; i++) {
+                const shootingStar = document.createElement('div');
+                shootingStar.classList.add('shooting-star');
+                
+                const y = Math.random() * 70 + 5;
+                const angle = Math.random() * 20 - 10;
+                const duration = Math.random() * 10 + 10;
+                const delay = Math.random() * 15;
+                
+                shootingStar.style.top = `${y}%`;
+                shootingStar.style.setProperty('--angle', `${angle}deg`);
+                shootingStar.style.setProperty('--duration', `${duration}s`);
+                shootingStar.style.setProperty('--delay', `${delay}s`);
+                
+                starsContainer.appendChild(shootingStar);
+            }
         }
         
         // Initialize stars
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
+        });
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if (this.getAttribute('href') === '#') return;
+                
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    const headerHeight = document.querySelector('.navbar').offsetHeight;
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
         });
     </script>
     {% block scripts %}{% endblock %}

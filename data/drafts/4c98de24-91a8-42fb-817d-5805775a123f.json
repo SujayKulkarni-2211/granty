@@ -1,0 +1,314 @@
+{
+  "id": "4c98de24-91a8-42fb-817d-5805775a123f",
+  "title": "Custom Draft - 2025-05-27 20:26",
+  "template_id": "92bd6f2a-96a9-4467-a202-a2443b900f4a",
+  "sections": [
+    {
+      "id": "cover-sheet-information",
+      "title": "Cover Sheet Information",
+      "description": "Basic information about the organization and the grant request.",
+      "questions": [
+        {
+          "id": "date-of-application",
+          "text": "Date of Application",
+          "type": "text",
+          "sample_answer": "October 26, 2023"
+        },
+        {
+          "id": "legal-name-of-organization",
+          "text": "Legal Name of Organization Applying",
+          "type": "text",
+          "sample_answer": "Community Support Services, Inc."
+        },
+        {
+          "id": "year-founded",
+          "text": "Year Founded",
+          "type": "text",
+          "sample_answer": "1998"
+        },
+        {
+          "id": "current-annual-operating-budget",
+          "text": "Current Annual Operating Budget",
+          "type": "text",
+          "sample_answer": "$500,000"
+        },
+        {
+          "id": "united-way-funding",
+          "text": "Are you currently receiving United Way Program Funding? Identify programs and amount:",
+          "type": "textarea",
+          "sample_answer": "Yes. We currently receive $25,000 annually for our youth mentoring program and $15,000 for our emergency food assistance program."
+        },
+        {
+          "id": "executive-director",
+          "text": "Executive Director",
+          "type": "text",
+          "sample_answer": "Jane Doe"
+        },
+        {
+          "id": "contact-person",
+          "text": "Contact Person/Title (if different from Executive Director)",
+          "type": "text",
+          "sample_answer": "John Smith, Program Manager"
+        },
+        {
+          "id": "address",
+          "text": "Address (principal/administrative office)",
+          "type": "text",
+          "sample_answer": "123 Main Street, Suite 400"
+        },
+        {
+          "id": "mailing-address",
+          "text": "Mailing Address, if different from above",
+          "type": "text",
+          "sample_answer": "Same as above"
+        },
+        {
+          "id": "city-state-zip",
+          "text": "City, State, Zip",
+          "type": "text",
+          "sample_answer": "Anytown, PA 12345"
+        },
+        {
+          "id": "phone-number",
+          "text": "Phone Number",
+          "type": "text",
+          "sample_answer": "555-123-4567"
+        },
+        {
+          "id": "fax-number",
+          "text": "Fax Number",
+          "type": "text",
+          "sample_answer": "555-123-4568"
+        },
+        {
+          "id": "project-name",
+          "text": "Project Name",
+          "type": "text",
+          "sample_answer": "Youth Empowerment Initiative"
+        },
+        {
+          "id": "purpose-of-grant",
+          "text": "Purpose of Grant (one sentence)",
+          "type": "text",
+          "sample_answer": "To provide at-risk youth with access to educational resources and mentorship opportunities."
+        },
+        {
+          "id": "project-dates",
+          "text": "Beginning and Ending Dates of the Project/Campaign",
+          "type": "text",
+          "sample_answer": "January 1, 2024 - December 31, 2024"
+        },
+        {
+          "id": "amount-requested",
+          "text": "Amount Requested",
+          "type": "text",
+          "sample_answer": "$50,000"
+        },
+        {
+          "id": "total-project-cost",
+          "text": "Total Project Cost",
+          "type": "text",
+          "sample_answer": "$75,000"
+        },
+        {
+          "id": "geographic-area-served",
+          "text": "Geographic Area Served",
+          "type": "text",
+          "sample_answer": "Anytown, PA and surrounding counties"
+        }
+      ]
+    },
+    {
+      "id": "narrative-section",
+      "title": "Narrative Section",
+      "description": "Detailed description of the organization and the proposed project.",
+      "questions": [
+        {
+          "id": "organization-summary",
+          "text": "Summarize your organization\u2019s history.",
+          "type": "textarea",
+          "sample_answer": "Community Support Services, Inc. (CSS) was founded in 1998 with a mission to empower underserved communities.  Initially focusing on emergency food assistance, CSS has expanded to encompass youth mentoring, job training, and community development programs. Our consistent growth reflects our responsiveness to community needs and our commitment to impactful service delivery."
+        },
+        {
+          "id": "mission-goals-challenges",
+          "text": "State your mission and goals, future challenges, and long-range plans.",
+          "type": "textarea",
+          "sample_answer": "Our mission is to improve the lives of individuals and families in need through comprehensive support services.  Our primary goal is to increase youth graduation rates by 15% in the next three years.  Future challenges include securing sustainable funding and adapting to evolving community needs. Our long-range plan involves expanding our services to include affordable housing initiatives."
+        },
+        {
+          "id": "current-programs",
+          "text": "Outline current programs and activities.",
+          "type": "textarea",
+          "sample_answer": "Currently, we offer emergency food assistance, youth mentoring, job skills training, and community garden projects. These programs are designed to address food insecurity, improve educational outcomes, increase employment opportunities, and promote healthy lifestyles."
+        },
+        {
+          "id": "accomplishments",
+          "text": "Highlight accomplishments.",
+          "type": "textarea",
+          "sample_answer": "In the past year, we served over 500 individuals through our food assistance program, mentored 75 youth, and placed 20 individuals in sustainable employment. We also successfully launched a new community garden, providing fresh produce to low-income families."
+        },
+        {
+          "id": "differentiation",
+          "text": "Differentiate yourself from similar or competing organizations.",
+          "type": "textarea",
+          "sample_answer": "Unlike other organizations that focus on a single aspect of community support, CSS offers an integrated approach. This holistic model ensures individuals receive comprehensive support tailored to their specific needs, leading to more sustainable positive outcomes."
+        },
+        {
+          "id": "proposed-program",
+          "text": "Describe the proposed program or project.",
+          "type": "textarea",
+          "sample_answer": "The Youth Empowerment Initiative is a comprehensive program designed to equip at-risk youth with the skills and resources needed to succeed.  This includes academic tutoring, mentoring, leadership development workshops, and college preparation assistance.  The program will directly serve 100 youth aged 13-18 in Anytown, PA."
+        },
+        {
+          "id": "needs-problems-addressed",
+          "text": "Identify the needs/problems to be addressed, target population and number of people to be served by the project.",
+          "type": "textarea",
+          "sample_answer": "This initiative addresses the high dropout rate and limited access to educational resources among at-risk youth in Anytown.  Our target population is youth aged 13-18 from low-income families.  The project will directly serve 100 youth, with the potential to indirectly impact hundreds more through community engagement."
+        },
+        {
+          "id": "project-goals-objectives",
+          "text": "Describe the project goals and objectives, and your plan to meet them.",
+          "type": "textarea",
+          "sample_answer": "The primary goal is to increase high school graduation rates among participating youth.  Objectives include improving academic performance, enhancing leadership skills, and promoting college readiness.  We will achieve this through a combination of individualized tutoring, group workshops, mentoring, and college application assistance."
+        },
+        {
+          "id": "new-or-continuing",
+          "text": "Define the project as a new or continuing program.",
+          "type": "text",
+          "sample_answer": "New"
+        },
+        {
+          "id": "participating-organizations",
+          "text": "Identify other organizations, partners or funders participating in the project and their roles.",
+          "type": "textarea",
+          "sample_answer": "We are collaborating with the Anytown School District, which will provide classroom space and access to student records.  We are also seeking in-kind support from local businesses for supplies and equipment."
+        },
+        {
+          "id": "implementation-timetable",
+          "text": "Provide a timetable for implementation.",
+          "type": "textarea",
+          "sample_answer": "The project will be implemented over a 12-month period.  Months 1-3 will focus on recruitment and program setup. Months 4-9 will involve program delivery, including tutoring, mentoring, and workshops. Months 10-12 will focus on program evaluation and reporting."
+        },
+        {
+          "id": "long-term-funding",
+          "text": "Identify long-term funding resources.",
+          "type": "textarea",
+          "sample_answer": "We plan to seek long-term funding through a combination of grants, corporate sponsorships, and individual donations.  We will also explore the possibility of government funding opportunities."
+        },
+        {
+          "id": "similar-program-impact",
+          "text": "If a similar program or service has been conducted by your organization or another, please discuss its impact. Does it represent an expansion or duplication of services in your area? If it doesn\u2019t, define its potential to serve as a model program locally or nationally.",
+          "type": "textarea",
+          "sample_answer": "This is a new program for CSS.  However, similar programs have shown positive impacts on youth outcomes nationwide.  This program\u2019s success has the potential to serve as a model for other communities facing similar challenges."
+        },
+        {
+          "id": "evaluation-plan",
+          "text": "Describe your plan to document progress and results.",
+          "type": "textarea",
+          "sample_answer": "We will track participant attendance, academic performance, and leadership development progress throughout the program.  Regular progress reports will be submitted to the grant provider. A final evaluation report, including quantitative and qualitative data, will be submitted at the end of the project."
+        }
+      ]
+    },
+    {
+      "id": "attachments-section",
+      "title": "Attachments",
+      "description": "List of documents to be included with the grant application.",
+      "questions": [
+        {
+          "id": "irs-determination-letter",
+          "text": "Copy of the current IRS determination letter indicating 501(c)(3) tax-exempt status.",
+          "type": "text",
+          "sample_answer": "Attached"
+        },
+        {
+          "id": "payroll-tax-payments",
+          "text": "Statement verifying payroll tax payments.",
+          "type": "text",
+          "sample_answer": "Attached"
+        },
+        {
+          "id": "organizational-structure",
+          "text": "Organizational structure, including: List of officers and directors, including occupations, places of employment, and relevant affiliations. Description of board responsibilities, including committee assignments. Resumes and/or job descriptions of key personnel involved in the project.",
+          "type": "text",
+          "sample_answer": "Attached"
+        },
+        {
+          "id": "financial-information",
+          "text": "Finances, including: Grant budget. List of other funders, potential funders and amounts committed or requested, including public contracts, individual contributions and other sources of income supporting the project. Current board-approved annual operating budget, including expenses and income. Most recent audited annual financial statement. Letters of support (optional) that substantiate need for the project and collaboration with other organizations. Annual report, if available.",
+          "type": "text",
+          "sample_answer": "Attached"
+        }
+      ]
+    },
+    {
+      "id": "budget-section",
+      "title": "Budget Section",
+      "description": "Detailed breakdown of project expenses and income.",
+      "questions": [
+        {
+          "id": "budget-period",
+          "text": "Please specify the budget period (e.g., January 1, 2024 to December 31, 2024).",
+          "type": "text",
+          "sample_answer": "January 1, 2024 - December 31, 2024"
+        },
+        {
+          "id": "expenses-itemized",
+          "text": "Please itemize the following expenses. Be sure to include any additional items relevant to your particular program. Provide an expense total.",
+          "type": "textarea",
+          "sample_answer": "This section would include a detailed breakdown of expenses such as salaries, benefits, rent, utilities, supplies, program materials, travel, and other relevant costs.  A total expense figure would be calculated at the end."
+        },
+        {
+          "id": "income-itemized",
+          "text": "Please include all confirmed and anticipated sources of revenue, and indicate their status. Provide an income total.",
+          "type": "textarea",
+          "sample_answer": "This section would list all sources of income, such as the grant request, in-kind donations, other grants, fundraising events, and any other revenue streams, with a total income figure at the end."
+        }
+      ]
+    }
+  ],
+  "answers": {
+    "date-of-application": "October 26, 2023",
+    "legal-name-of-organization": "Community Support Services, Inc.",
+    "year-founded": "1998",
+    "current-annual-operating-budget": "$500,000",
+    "united-way-funding": "Yes. We currently receive $25,000 annually for our youth mentoring program and $15,000 for our emergency food assistance program.",
+    "executive-director": "Jane Doe",
+    "contact-person": "John Smith, Program Manager",
+    "address": "123 Main Street, Suite 400",
+    "mailing-address": "Same as above",
+    "city-state-zip": "Anytown, PA 12345",
+    "phone-number": "555-123-4567",
+    "fax-number": "555-123-4568",
+    "project-name": "Youth Empowerment Initiative",
+    "purpose-of-grant": "To provide at-risk youth with access to educational resources and mentorship opportunities.",
+    "project-dates": "January 1, 2024 - December 31, 2024",
+    "amount-requested": "$50,000",
+    "total-project-cost": "$75,000",
+    "geographic-area-served": "Anytown, PA and surrounding counties",
+    "organization-summary": "Community Support Services, Inc. (CSS) was founded in 1998 with a mission to empower underserved communities.  Initially focusing on emergency food assistance, CSS has expanded to encompass youth mentoring, job training, and community development programs. Our consistent growth reflects our responsiveness to community needs and our commitment to impactful service delivery.",
+    "mission-goals-challenges": "Our mission is to improve the lives of individuals and families in need through comprehensive support services.  Our primary goal is to increase youth graduation rates by 15% in the next three years.  Future challenges include securing sustainable funding and adapting to evolving community needs. Our long-range plan involves expanding our services to include affordable housing initiatives.",
+    "current-programs": "Currently, we offer emergency food assistance, youth mentoring, job skills training, and community garden projects. These programs are designed to address food insecurity, improve educational outcomes, increase employment opportunities, and promote healthy lifestyles.",
+    "accomplishments": "In the past year, we served over 500 individuals through our food assistance program, mentored 75 youth, and placed 20 individuals in sustainable employment. We also successfully launched a new community garden, providing fresh produce to low-income families.",
+    "differentiation": "Unlike other organizations that focus on a single aspect of community support, CSS offers an integrated approach. This holistic model ensures individuals receive comprehensive support tailored to their specific needs, leading to more sustainable positive outcomes.",
+    "proposed-program": "The Youth Empowerment Initiative is a comprehensive program designed to equip at-risk youth with the skills and resources needed to succeed.  This includes academic tutoring, mentoring, leadership development workshops, and college preparation assistance.  The program will directly serve 100 youth aged 13-18 in Anytown, PA.",
+    "needs-problems-addressed": "This initiative addresses the high dropout rate and limited access to educational resources among at-risk youth in Anytown.  Our target population is youth aged 13-18 from low-income families.  The project will directly serve 100 youth, with the potential to indirectly impact hundreds more through community engagement.",
+    "project-goals-objectives": "The primary goal is to increase high school graduation rates among participating youth.  Objectives include improving academic performance, enhancing leadership skills, and promoting college readiness.  We will achieve this through a combination of individualized tutoring, group workshops, mentoring, and college application assistance.",
+    "new-or-continuing": "New",
+    "participating-organizations": "We are collaborating with the Anytown School District, which will provide classroom space and access to student records.  We are also seeking in-kind support from local businesses for supplies and equipment.",
+    "implementation-timetable": "The project will be implemented over a 12-month period.  Months 1-3 will focus on recruitment and program setup. Months 4-9 will involve program delivery, including tutoring, mentoring, and workshops. Months 10-12 will focus on program evaluation and reporting.",
+    "long-term-funding": "We plan to seek long-term funding through a combination of grants, corporate sponsorships, and individual donations.  We will also explore the possibility of government funding opportunities.",
+    "similar-program-impact": "This is a new program for CSS.  However, similar programs have shown positive impacts on youth outcomes nationwide.  This program\u2019s success has the potential to serve as a model for other communities facing similar challenges.",
+    "evaluation-plan": "We will track participant attendance, academic performance, and leadership development progress throughout the program.  Regular progress reports will be submitted to the grant provider. A final evaluation report, including quantitative and qualitative data, will be submitted at the end of the project.",
+    "irs-determination-letter": "Attached",
+    "payroll-tax-payments": "Attached",
+    "organizational-structure": "Attached",
+    "financial-information": "Attached",
+    "budget-period": "January 1, 2024 - December 31, 2024",
+    "expenses-itemized": "This section would include a detailed breakdown of expenses such as salaries, benefits, rent, utilities, supplies, program materials, travel, and other relevant costs.  A total expense figure would be calculated at the end.",
+    "income-itemized": "This section would list all sources of income, such as the grant request, in-kind donations, other grants, fundraising events, and any other revenue streams, with a total income figure at the end."
+  },
+  "created_at": "2025-05-27T20:26:41.952156",
+  "updated_at": "2025-05-27T20:26:41.952156",
+  "diagrams": [],
+  "generated_content": null
+}

@@ -551,13 +551,13 @@ def payment_page(draft_id):
     # Store payment session
     session['payment_id'] = payment_id
     session['draft_id_for_payment'] = draft_id
-    session['payment_amount'] = 5  # ₹5
+    session['payment_amount'] = 5  # ₹49
     session['payment_status'] = 'pending'
     
     return render_template('payment.html', 
                          draft=draft, 
                          payment_id=payment_id,
-                         amount=5)
+                         amount=49)
 
 @app.route('/verify-payment-new', methods=['POST'])
 def verify_payment_new():

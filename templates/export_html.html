@@ -176,7 +176,7 @@
                 <h4>🔒 Want the Full PDF Version?</h4>
                 <p>This preview shows your complete grant proposal content. To download the professionally formatted PDF version:</p>
                 <a href="/preview/{{ draft.id }}" class="btn btn-primary btn-lg">
-                    💰 Purchase PDF (₹5) or Use Coupon
+                    💰 Purchase PDF (₹49) or Use Coupon
                 </a>
             </div>
             <p><small>Generated with Grant Writing Assistant | Secure Payment via UPI</small></p>
@@ -235,7 +235,7 @@
             // Ctrl+P
             if (e.ctrlKey && e.keyCode === 80) {
                 e.preventDefault();
-                alert('🚫 Printing is disabled. Purchase the PDF version for ₹5 or use coupon "grantyadmin".');
+                alert('🚫 Printing is disabled. Purchase the PDF version for ₹49 or use coupon "grantyadmin".');
                 return false;
             }
         });
@@ -256,7 +256,7 @@
                     border-radius: 25px; z-index: 9999; font-weight: bold;
                     animation: fadeInOut 3s ease-in-out;
                 `;
-                reminder.innerHTML = '💰 Get the full PDF for just ₹5!';
+                reminder.innerHTML = '💰 Get the full PDF for just ₹49!';
                 document.body.appendChild(reminder);
                 
                 setTimeout(() => {

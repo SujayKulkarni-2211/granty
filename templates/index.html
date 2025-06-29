@@ -1,0 +1,892 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to grantY - AI-Powered Document Creation Assistant{% endblock %}
+
+{% block styles %}
+<style>
+    /* Hero Section - RESPONSIVE */
+    .hero-section {
+        text-align: center;
+        padding: clamp(40px, 8vh, 80px) 0;
+        margin-bottom: 40px;
+        position: relative;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .hero-text {
+        flex: 1;
+        min-width: 300px;
+        text-align: left;
+    }
+
+    .hero-image {
+        flex: 1;
+        min-width: 300px;
+        max-width: 500px;
+        position: relative;
+    }
+
+    .hero-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        transition: all 0.5s ease;
+    }
+    
+    .hero-image::before {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        width: calc(100% + 40px);
+        height: calc(100% + 40px);
+        border: 2px solid var(--accent);
+        border-radius: 25px;
+        opacity: 0.3;
+        z-index: -1;
+        animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.3;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.5;
+        }
+    }
+
+    .floating {
+        animation: floating 3s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-15px);
+        }
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: white;
+        line-height: 1.2;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s forwards;
+    }
+
+    .hero-title span {
+        color: var(--accent);
+        position: relative;
+    }
+
+    .hero-title span::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        bottom: -4px;
+        left: 0;
+        background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .hero-subtitle {
+        font-size: clamp(1.1rem, 3vw, 1.3rem);
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 30px;
+        line-height: 1.6;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s 0.2s forwards;
+    }
+
+    .typewriter-container {
+        height: 40px;
+        margin-bottom: 40px;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s 0.4s forwards;
+    }
+
+    .typewriter-text {
+        color: var(--accent);
+        font-size: clamp(1.1rem, 3vw, 1.3rem);
+        font-weight: 500;
+        display: inline-block;
+        position: relative;
+    }
+
+    .typewriter-text::after {
+        content: '|';
+        position: absolute;
+        right: -8px;
+        animation: blink 0.7s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.8s 0.6s forwards;
+    }
+
+    .hero-buttons .btn {
+        min-width: 180px;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Document Categories Section */
+    .categories-section {
+        padding: clamp(60px, 10vh, 100px) 0;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        margin: 40px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        font-weight: 700;
+        color: white;
+        margin-bottom: 15px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        width: 80px;
+        height: 3px;
+        background-color: var(--accent);
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .section-title p {
+        color: rgba(255, 255, 255, 0.7);
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+    }
+
+    .categories-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .category-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.5s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .category-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+        opacity: 0;
+        transition: all 0.5s ease;
+        z-index: -1;
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(76, 201, 240, 0.3);
+    }
+
+    .category-card:hover::before {
+        opacity: 1;
+    }
+
+    .category-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        color: white;
+        font-size: 28px;
+        box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .category-icon {
+        transform: rotateY(180deg);
+    }
+
+    .category-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: white;
+    }
+
+    .category-description {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+
+    .template-count {
+        background: rgba(76, 201, 240, 0.2);
+        color: var(--accent);
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .explore-btn {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .explore-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(67, 97, 238, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Category-specific colors */
+    .grant-category .category-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .pitch-deck-category .category-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .business-proposal-category .category-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .executive-summary-category .category-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .scientific-proposal-category .category-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+    /* Features Section */
+    .features-section {
+        padding: clamp(60px, 10vh, 100px) 0;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        margin: 40px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.5s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+        opacity: 0;
+        transition: all 0.5s ease;
+        z-index: -1;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        border-color: rgba(76, 201, 240, 0.3);
+    }
+
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+
+    .feature-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        color: white;
+        font-size: 28px;
+        box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: rotateY(180deg);
+        background: linear-gradient(135deg, var(--accent), var(--primary));
+    }
+
+    .feature-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: white;
+    }
+
+    .feature-description {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        padding: clamp(60px, 10vh, 100px) 0;
+        background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+        border-radius: 20px;
+        margin: 40px 0;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .cta-section h2 {
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: white;
+    }
+
+    .cta-section p {
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 40px;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .cta-buttons .btn {
+        min-width: 200px;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    /* Chat Icon */
+    .chat-icon {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        text-decoration: none;
+    }
+
+    .chat-icon:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
+        color: white;
+        text-decoration: none;
+    }
+
+    .chat-tooltip {
+        position: absolute;
+        right: 70px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .chat-icon:hover .chat-tooltip {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .hero-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .hero-text {
+            text-align: center;
+        }
+
+        .categories-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .features-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-buttons .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cta-buttons .btn {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .categories-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .category-card {
+            padding: 25px 20px;
+        }
+
+        .feature-card {
+            padding: 25px 20px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-section {
+            padding: 30px 0;
+        }
+
+        .categories-section {
+            padding: 40px 0;
+        }
+
+        .features-section {
+            padding: 40px 0;
+        }
+
+        .cta-section {
+            padding: 40px 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">AI-Powered <span>Document</span> Creation</h1>
+            <p class="hero-subtitle">Create professional grants, business proposals, pitch decks, and more with intelligent AI assistance. Choose from templates or upload your own format.</p>
+            <div class="typewriter-container">
+                <span class="typewriter-text" id="typewriter"></span>
+            </div>
+            <div class="hero-buttons">
+                <a class="btn btn-primary" href="/new-document" role="button">
+                    <i class="fas fa-plus"></i> Create Document
+                </a>
+                <a class="btn btn-outline-primary" href="/opportunities" role="button">
+                    <i class="fas fa-search"></i> Find Opportunities
+                </a>
+            </div>
+        </div>
+        <div class="hero-image floating" onclick="window.location.href='/static/images/herovideo.mp4'" style="cursor: pointer;">
+            <img src="/static/images/herogif.gif" alt="AI Document Creation">
+        </div>
+    </div>
+</div>
+
+<!-- Document Categories Section -->
+<div class="categories-section">
+    <div class="section-title">
+        <h2>Document Types</h2>
+        <p>Choose from our comprehensive collection of professional document templates, each powered by AI to help you create compelling content.</p>
+    </div>
+    <div class="categories-grid">
+        {% for category, templates in template_categories.items() %}
+        <div class="category-card {{ category }}-category">
+            <div class="category-icon">
+                {% if category == 'grant' %}
+                    <i class="fas fa-university"></i>
+                {% elif category == 'pitch_deck' %}
+                    <i class="fas fa-presentation"></i>
+                {% elif category == 'business_proposal' %}
+                    <i class="fas fa-briefcase"></i>
+                {% elif category == 'executive_summary' %}
+                    <i class="fas fa-chart-line"></i>
+                {% elif category == 'scientific_proposal' %}
+                    <i class="fas fa-microscope"></i>
+                {% else %}
+                    <i class="fas fa-file-alt"></i>
+                {% endif %}
+            </div>
+            <h3 class="category-title">{{ category.replace('_', ' ').title() }}</h3>
+            <p class="category-description">
+                {% if category == 'grant' %}
+                    Research grants, funding proposals, and academic applications for universities and institutions.
+                {% elif category == 'pitch_deck' %}
+                    Investor presentations and startup funding decks for raising capital and showcasing ideas.
+                {% elif category == 'business_proposal' %}
+                    Corporate partnerships, project proposals, and comprehensive business plans.
+                {% elif category == 'executive_summary' %}
+                    Concise executive summaries for various business documents and reports.
+                {% elif category == 'scientific_proposal' %}
+                    Scientific research proposals and academic submissions for research institutions.
+                {% else %}
+                    Custom document templates tailored to your specific needs.
+                {% endif %}
+            </p>
+            <div class="template-count">{{ templates|length }} templates available</div>
+            <a href="/new-document#{{ category }}" class="explore-btn">
+                <i class="fas fa-arrow-right"></i> Explore Templates
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features-section">
+    <div class="section-title">
+        <h2>Why Choose grantY?</h2>
+        <p>Our AI-powered platform offers a comprehensive suite of tools to streamline your document creation process and maximize your success rate.</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h3 class="feature-title">AI-Powered Writing</h3>
+            <p class="feature-description">Generate structured, compelling documents with our advanced AI that understands professional writing standards and best practices.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h3 class="feature-title">AI Chat Assistant</h3>
+            <p class="feature-description">Get real-time help from our AI chatbot that can guide you through document creation, suggest improvements, and answer questions.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <h3 class="feature-title">Professional Templates</h3>
+            <p class="feature-description">Access 25+ proven templates across 5 categories, each designed by experts for maximum impact and success rates.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-upload"></i>
+            </div>
+            <h3 class="feature-title">Custom Format Upload</h3>
+            <p class="feature-description">Upload your own PDF formats and let our AI analyze them to create tailored questions and structured templates.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <h3 class="feature-title">Interactive Editor</h3>
+            <p class="feature-description">Edit and refine your documents with our intuitive editor, then export as professional Word documents or PDFs.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-search-dollar"></i>
+            </div>
+            <h3 class="feature-title">Opportunity Discovery</h3>
+            <p class="feature-description">Find relevant funding opportunities and grants that match your business or research focus area using AI analysis.</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="cta-section">
+    <h2>Ready to Create Professional Documents?</h2>
+    <p>Join thousands of professionals who are using grantY to create compelling proposals, secure funding, and communicate their ideas effectively.</p>
+    <div class="cta-buttons">
+        <a href="/new-document" class="btn btn-primary">
+            <i class="fas fa-rocket"></i> Start Creating Now
+        </a>
+        {% if not current_user.is_authenticated %}
+        <a href="/register" class="btn btn-outline-primary">
+            <i class="fas fa-user-plus"></i> Create Free Account
+        </a>
+        {% else %}
+        <a href="/dashboard" class="btn btn-outline-primary">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chat Icon (show if user has projects) -->
+{% if drafts and drafts|length > 0 %}
+<a href="/chat/{{ drafts[0].id }}" class="chat-icon">
+    <i class="fas fa-comments"></i>
+    <div class="chat-tooltip">AI Assistant</div>
+</a>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Enhanced Typewriter Effect
+function typeWriter() {
+    const typewriterElement = document.getElementById('typewriter');
+    const phrases = [
+        "Create grants in minutes, not hours...",
+        "Generate compelling pitch decks instantly...",
+        "Upload custom formats for any document...",
+        "Get AI-powered writing assistance...",
+        "Export professional Word & PDF documents..."
+    ];
+    
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 100;
+    
+    function type() {
+        const currentPhrase = phrases[phraseIndex];
+        
+        if (isDeleting) {
+            typewriterElement.textContent = currentPhrase.substring(0, charIndex - 1);
+            charIndex--;
+            typingSpeed = 50;
+        } else {
+            typewriterElement.textContent = currentPhrase.substring(0, charIndex + 1);
+            charIndex++;
+            typingSpeed = 100;
+        }
+        
+        if (!isDeleting && charIndex === currentPhrase.length) {
+            isDeleting = true;
+            typingSpeed = 2000;
+        } else if (isDeleting && charIndex === 0) {
+            isDeleting = false;
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            typingSpeed = 500;
+        }
+        
+        setTimeout(type, typingSpeed);
+    }
+    
+    setTimeout(type, 4000);
+}
+
+typeWriter();
+
+// Intersection Observer for animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Observe category cards
+    const categoryCards = document.querySelectorAll('.category-card');
+    categoryCards.forEach((card, index) => {
+        card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+        observer.observe(card);
+    });
+
+    // Observe feature cards
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach((card, index) => {
+        card.style.transition = `all 0.6s ease ${index * 0.1}s`;
+        observer.observe(card);
+    });
+
+    // Add stagger animation to hero elements
+    const heroElements = document.querySelectorAll('.hero-title, .hero-subtitle, .typewriter-container, .hero-buttons');
+    heroElements.forEach((element, index) => {
+        element.style.animationDelay = `${index * 0.2}s`;
+    });
+    
+    // Add stagger animation to hero image
+    const heroImage = document.querySelector('.hero-image');
+    if (heroImage) {
+        heroImage.style.opacity = '0';
+        heroImage.style.transform = 'translateX(20px)';
+        heroImage.style.animation = 'fadeInRight 0.8s 0.8s forwards';
+    }
+});
+
+// Add loading states to buttons
+document.querySelectorAll('.btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        if (this.href && !this.href.includes('#') && !this.href.includes('javascript:')) {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            this.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.style.pointerEvents = '';
+            }, 3000);
+        }
+    });
+});
+
+// Parallax effect for floating elements
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const parallax = document.querySelectorAll('.floating');
+    const speed = 0.5;
+
+    parallax.forEach(element => {
+        const yPos = -(scrolled * speed);
+        element.style.transform = `translate3d(0, ${yPos}px, 0)`;
+    });
+});
+
+// Smooth scroll to categories when clicking explore buttons
+document.querySelectorAll('a[href^="/new-document#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = '/new-document';
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,530 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Document - grantY{% endblock %}
+
+{% block styles %}
+<style>
+.category-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.category-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border-color: rgba(76, 201, 240, 0.3);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    font-size: 24px;
+    color: white;
+}
+
+.category-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.category-description {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 5px 0 0 0;
+    font-size: 0.95rem;
+}
+
+.templates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.template-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.template-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: -1;
+}
+
+.template-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border-color: rgba(76, 201, 240, 0.5);
+}
+
+.template-card:hover::before {
+    opacity: 1;
+}
+
+.template-header {
+    display: flex;
+    justify-content: between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.template-name {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.template-description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.template-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.sections-count {
+    background: rgba(76, 201, 240, 0.2);
+    color: var(--accent);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.use-template-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.use-template-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
+}
+
+.custom-upload-section {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.1));
+    border: 2px dashed rgba(243, 156, 18, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    margin-top: 30px;
+    transition: all 0.3s ease;
+}
+
+.custom-upload-section:hover {
+    border-color: rgba(243, 156, 18, 0.5);
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.15), rgba(230, 126, 34, 0.15));
+}
+
+.upload-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 24px;
+    color: white;
+}
+
+.upload-title {
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.upload-description {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.file-input {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-input-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.file-input-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.selected-file {
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin-top: 10px;
+    font-weight: 500;
+}
+
+.upload-submit-btn {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.upload-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(243, 156, 18, 0.4);
+}
+
+.upload-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.page-subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Category-specific colors */
+.grant-category .category-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+.pitch-deck-category .category-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.business-proposal-category .category-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+.executive-summary-category .category-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+.scientific-proposal-category .category-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+/* Chat Icon */
+.chat-icon {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    text-decoration: none;
+}
+
+.chat-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
+    color: white;
+    text-decoration: none;
+}
+
+.chat-tooltip {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.chat-icon:hover .chat-tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+@media (max-width: 768px) {
+    .templates-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .category-section {
+        padding: 20px;
+    }
+    
+    .custom-upload-section {
+        padding: 25px 15px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Create New Document</h1>
+    <p class="page-subtitle">Choose from our professional templates or upload your own format to get started with AI-powered document creation.</p>
+</div>
+
+{% for category, templates in template_categories.items() %}
+<div class="category-section {{ category }}-category">
+    <div class="category-header">
+        <div class="category-icon">
+            {% if category == 'grant' %}
+                <i class="fas fa-university"></i>
+            {% elif category == 'pitch_deck' %}
+                <i class="fas fa-presentation"></i>
+            {% elif category == 'business_proposal' %}
+                <i class="fas fa-briefcase"></i>
+            {% elif category == 'executive_summary' %}
+                <i class="fas fa-chart-line"></i>
+            {% elif category == 'scientific_proposal' %}
+                <i class="fas fa-microscope"></i>
+            {% else %}
+                <i class="fas fa-file-alt"></i>
+            {% endif %}
+        </div>
+        <div>
+            <h2 class="category-title">{{ category.replace('_', ' ').title() }}</h2>
+            <p class="category-description">
+                {% if category == 'grant' %}
+                    Research grants, funding proposals, and academic applications
+                {% elif category == 'pitch_deck' %}
+                    Investor presentations and startup funding decks
+                {% elif category == 'business_proposal' %}
+                    Corporate partnerships, project proposals, and business plans
+                {% elif category == 'executive_summary' %}
+                    Executive summaries for various business documents
+                {% elif category == 'scientific_proposal' %}
+                    Scientific research proposals and academic submissions
+                {% else %}
+                    Custom document templates
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    
+    <div class="templates-grid">
+        {% for template in templates %}
+        <div class="template-card" onclick="useTemplate('{{ template.id }}')">
+            <div class="template-header">
+                <div>
+                    <h3 class="template-name">{{ template.name }}</h3>
+                    <p class="template-description">{{ template.description }}</p>
+                </div>
+            </div>
+            <div class="template-meta">
+                <span class="sections-count">{{ template.get_sections()|length }} sections</span>
+            </div>
+            <button class="use-template-btn" type="button">
+                <i class="fas fa-play"></i> Use This Template
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+<!-- Custom Upload Section -->
+<div class="custom-upload-section">
+    <div class="upload-icon">
+        <i class="fas fa-upload"></i>
+    </div>
+    <h2 class="upload-title">Upload Custom Template</h2>
+    <p class="upload-description">
+        Have your own document format? Upload a PDF, TXT, or DOCX file and our AI will analyze it to create a custom template with relevant questions and sample answers.
+    </p>
+    
+    <form id="customUploadForm" action="/upload-custom" method="post" enctype="multipart/form-data">
+        <div class="file-input-wrapper">
+            <input type="file" id="customTemplate" name="custom_template" class="file-input" accept=".txt,.pdf,.docx" onchange="handleFileSelect(this)">
+            <label for="customTemplate" class="file-input-btn">
+                <i class="fas fa-folder-open"></i> Choose File
+            </label>
+        </div>
+        <div id="selectedFile" class="selected-file" style="display: none;"></div>
+        <br>
+        <button type="submit" class="upload-submit-btn" id="uploadBtn" disabled>
+            <i class="fas fa-magic"></i> Create Custom Template
+        </button>
+    </form>
+</div>
+
+<!-- Chat Icon (available for both logged in and guest users) -->
+{% if projects and projects|length > 0 %}
+<a href="/chat/{{ projects[0].id }}" class="chat-icon">
+    <i class="fas fa-comments"></i>
+    <div class="chat-tooltip">AI Assistant</div>
+</a>
+{% endif %}
+
+<!-- Hidden form for template selection -->
+<form id="templateForm" action="/create-document" method="post" style="display: none;">
+    <input type="hidden" name="template_id" id="selectedTemplateId">
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function useTemplate(templateId) {
+    document.getElementById('selectedTemplateId').value = templateId;
+    document.getElementById('templateForm').submit();
+}
+
+function handleFileSelect(input) {
+    const selectedFile = document.getElementById('selectedFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+    
+    if (input.files && input.files[0]) {
+        const fileName = input.files[0].name;
+        const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2); // MB
+        
+        selectedFile.innerHTML = `
+            <i class="fas fa-file"></i> 
+            <strong>${fileName}</strong> (${fileSize} MB)
+        `;
+        selectedFile.style.display = 'block';
+        uploadBtn.disabled = false;
+    } else {
+        selectedFile.style.display = 'none';
+        uploadBtn.disabled = true;
+    }
+}
+
+// Add loading state to form submission
+document.getElementById('customUploadForm').addEventListener('submit', function(e) {
+    const uploadBtn = document.getElementById('uploadBtn');
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    uploadBtn.disabled = true;
+});
+
+// Add loading states to template cards
+document.querySelectorAll('.template-card').forEach(card => {
+    card.addEventListener('click', function() {
+        const btn = this.querySelector('.use-template-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+    });
+});
+
+// Animate cards on scroll
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Observe category sections for animation
+    const categorySections = document.querySelectorAll('.category-section');
+    categorySections.forEach((section, index) => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(30px)';
+        section.style.transition = `all 0.6s ease ${index * 0.1}s`;
+        observer.observe(section);
+    });
+    
+    // Also observe the custom upload section
+    const uploadSection = document.querySelector('.custom-upload-section');
+    if (uploadSection) {
+        uploadSection.style.opacity = '0';
+        uploadSection.style.transform = 'translateY(30px)';
+        uploadSection.style.transition = 'all 0.6s ease 0.5s';
+        observer.observe(uploadSection);
+    }
+});
+</script>
+{% endblock %}

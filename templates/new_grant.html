@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Grant{% endblock %}
+{% block styles %}
+<style>
+.list-group-item {
+    background-color:rgba(0, 0, 0, 0) !important;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Create New Grant</h1>
+        <p class="lead" style="color: aliceblue;">Choose a template or upload your own format to get started.</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Choose a Template</h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group" style="margin-left: auto;">
+                    {% for template in templates %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ template.name }}</h5>
+                                <small style="color: aliceblue;">{{ template.sections|length }} sections</small>
+                            </div>
+                            <p class="mb-1" style="color: aliceblue;">{{ template.description }}</p>
+                            <form action="/new-grant" method="post" class="mt-2">
+                                <input type="hidden" name="template_id" value="{{ template.id }}">
+                                <button type="submit" class="btn btn-sm btn-primary">Use This Template</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Upload Custom Format</h5>
+            </div>
+            <div class="card-body">
+                <p>Upload your own grant format (text or PDF) and we'll analyze it to create a custom template.</p>
+                <form action="/upload-custom" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="custom_template" class="form-label">Custom Template File</label>
+                        <input class="form-control" type="file" id="custom_template" name="custom_template" accept=".txt,.pdf,.docx">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload and Create</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

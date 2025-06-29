@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}Payment - Download PDF{% endblock %}
+
+{% block styles %}
+<style>
+.payment-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.qr-section {
+    text-align: center;
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin: 30px 0;
+    color: #2c3e50;
+}
+
+.qr-code {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin: 20px 0;
+}
+
+.payment-info {
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.steps {
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.transaction-input {
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    color: white;
+    font-size: 16px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.transaction-input:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+}
+
+.verify-btn {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    border: none;
+    color: white;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.verify-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
+}
+
+.verify-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.status-message {
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    font-weight: 500;
+    text-align: center;
+}
+
+.status-success {
+    background: rgba(46, 204, 113, 0.2);
+    border: 1px solid rgba(46, 204, 113, 0.5);
+    color: #2ecc71;
+}
+
+.status-error {
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.5);
+    color: #e74c3c;
+}
+
+.status-loading {
+    background: rgba(243, 156, 18, 0.2);
+    border: 1px solid rgba(243, 156, 18, 0.5);
+    color: #f39c12;
+}
+
+.download-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none;
+    color: white;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin: 20px 0;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(67, 97, 238, 0.3);
+    color: white;
+    text-decoration: none;
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 3px solid white;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+    .payment-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .qr-code {
+        max-width: 250px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="payment-container">
+        <div class="text-center mb-4">
+            <h1><i class="fas fa-credit-card"></i> Complete Payment</h1>
+            <p class="lead">Download your grant proposal PDF for just ₹{{ amount }}</p>
+            <div class="badge bg-info">Payment ID: {{ payment_id }}</div>
+        </div>
+
+        <div class="payment-info">
+            <h4><i class="fas fa-info-circle"></i> Payment Details</h4>
+            <p><strong>Document:</strong> {{ draft.title }}</p>
+            <p><strong>Amount:</strong> ₹{{ amount }} only</p>
+            <p><strong>Payment Method:</strong> Google Pay / PhonePe / Paytm (Any UPI)</p>
+        </div>
+
+        <div class="qr-section">
+            <h3><i class="fas fa-qrcode"></i> Scan QR Code to Pay</h3>
+            <img src="{{ url_for('static', filename='images/qr.jpg') }}" 
+                 alt="Payment QR Code" 
+                 class="qr-code"
+                 onerror="this.style.display='none'; document.getElementById('qr-error').style.display='block';">
+            
+            <div id="qr-error" style="display: none;" class="alert alert-warning">
+                <strong>QR Code not found!</strong><br>
+                Please place your QR code image at: <code>static/images/qr.jpg</code>
+            </div>
+            
+            <p><strong>Amount: ₹{{ amount }}</strong></p>
+            <small class="text-muted">Use any UPI app to scan and pay</small>
+        </div>
+
+        <div class="steps">
+            <h4><i class="fas fa-list-ol"></i> How to Pay</h4>
+            <ol>
+                <li>Open Google Pay, PhonePe, Paytm or any UPI app</li>
+                <li>Scan the QR code above</li>
+                <li>Enter amount: <strong>₹{{ amount }}</strong></li>
+                <li>Complete the payment</li>
+                <li>Copy the transaction ID from your payment app</li>
+                <li>Enter it below and click "Verify Payment"</li>
+            </ol>
+        </div>
+
+        <div class="verification-section">
+            <h4><i class="fas fa-check-circle"></i> Verify Your Payment</h4>
+            <p>Enter the transaction ID you received after payment:</p>
+            
+            <input type="text" 
+                   id="transactionId" 
+                   class="transaction-input" 
+                   placeholder="Enter Transaction ID (e.g., 123456789012)"
+                   maxlength="50">
+            
+            <button id="verifyBtn" class="verify-btn" onclick="verifyPayment()">
+                <i class="fas fa-search"></i> Verify Payment
+            </button>
+        </div>
+
+        <div id="statusMessage" style="display: none;"></div>
+        
+        <div id="downloadSection" style="display: none;">
+            <a href="/download-pdf-new/{{ draft.id }}" class="download-btn">
+                <i class="fas fa-download"></i> Download Your PDF
+            </a>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/preview/{{ draft.id }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left"></i> Back to Preview
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function verifyPayment() {
+    const transactionId = document.getElementById('transactionId').value.trim();
+    const verifyBtn = document.getElementById('verifyBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const downloadSection = document.getElementById('downloadSection');
+    
+    if (!transactionId) {
+        showStatus('Please enter transaction ID', 'error');
+        return;
+    }
+    
+    // Disable button and show loading
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<span class="spinner"></span>Verifying...';
+    
+    showStatus('Verifying your payment... Please wait.', 'loading');
+    
+    // Send verification request
+    fetch('/verify-payment-new', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            transaction_id: transactionId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showStatus('🎉 Payment verified successfully! You can now download your PDF.', 'success');
+            downloadSection.style.display = 'block';
+            
+            // Hide verification section
+            document.querySelector('.verification-section').style.display = 'none';
+            
+            // Show celebration animation
+            celebrateSuccess();
+            
+        } else {
+            showStatus('❌ ' + data.message, 'error');
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="fas fa-search"></i> Verify Payment';
+        }
+    })
+    .catch(error => {
+        console.error('Verification error:', error);
+        showStatus('❌ Verification failed. Please check your internet connection and try again.', 'error');
+        verifyBtn.disabled = false;
+        verifyBtn.innerHTML = '<i class="fas fa-search"></i> Verify Payment';
+    });
+}
+
+function showStatus(message, type) {
+    const statusMessage = document.getElementById('statusMessage');
+    statusMessage.style.display = 'block';
+    statusMessage.className = `status-message status-${type}`;
+    statusMessage.innerHTML = message;
+    
+    // Auto-hide error messages after 5 seconds
+    if (type === 'error') {
+        setTimeout(() => {
+            statusMessage.style.display = 'none';
+        }, 5000);
+    }
+}
+
+function celebrateSuccess() {
+    // Add some celebration effects
+    const container = document.querySelector('.payment-container');
+    container.style.background = 'rgba(46, 204, 113, 0.2)';
+    container.style.border = '2px solid rgba(46, 204, 113, 0.5)';
+    
+    // Create confetti effect (simple version)
+    for (let i = 0; i < 10; i++) {
+        setTimeout(() => {
+            createConfetti();
+        }, i * 100);
+    }
+}
+
+function createConfetti() {
+    const confetti = document.createElement('div');
+    confetti.innerHTML = '🎉';
+    confetti.style.position = 'fixed';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.top = '-10px';
+    confetti.style.fontSize = '30px';
+    confetti.style.pointerEvents = 'none';
+    confetti.style.animation = 'fall 3s linear forwards';
+    confetti.style.zIndex = '9999';
+    
+    document.body.appendChild(confetti);
+    
+    setTimeout(() => {
+        if (confetti.parentNode) {
+            confetti.parentNode.removeChild(confetti);
+        }
+    }, 3000);
+}
+
+// Add CSS for falling animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fall {
+        from {
+            transform: translateY(-100px) rotate(0deg);
+            opacity: 1;
+        }
+        to {
+            transform: translateY(100vh) rotate(360deg);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Allow Enter key to verify payment
+document.getElementById('transactionId').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        verifyPayment();
+    }
+});
+
+// Auto-focus on transaction input
+document.getElementById('transactionId').focus();
+</script>
+{% endblock %}

@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+
+{% block title %}Help & Support - grantY{% endblock %}
+
+{% block styles %}
+<style>
+.help-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 40px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.help-section {
+    margin-bottom: 40px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.help-section h3 {
+    color: var(--accent);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.help-section h4 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.help-section p, .help-section li {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.help-section ul, .help-section ol {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+
+.feature-highlight {
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.1), rgba(76, 201, 240, 0.1));
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.step-card {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    border-left: 4px solid var(--accent);
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateX(5px);
+}
+
+.step-number {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: var(--accent);
+    color: var(--dark);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.faq-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin: 15px 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.faq-question {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.faq-question:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.faq-question::after {
+    content: '+';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.faq-question.active::after {
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.faq-answer {
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-answer.active {
+    padding: 20px;
+    max-height: 300px;
+}
+
+.contact-card {
+    background: linear-gradient(135deg, rgba(46, 204, 113, 0.1), rgba(39, 174, 96, 0.1));
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.payment-info {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.1));
+    border: 1px solid rgba(243, 156, 18, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.code-block {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    color: #00ff00;
+    margin: 15px 0;
+    overflow-x: auto;
+}
+
+.alert-custom {
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: none;
+}
+
+.alert-tip {
+    background: rgba(52, 152, 219, 0.15);
+    border-left: 4px solid #3498db;
+    color: white;
+}
+
+.alert-warning {
+    background: rgba(243, 156, 18, 0.15);
+    border-left: 4px solid #f39c12;
+    color: white;
+}
+
+.alert-success {
+    background: rgba(46, 204, 113, 0.15);
+    border-left: 4px solid #2ecc71;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .help-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .help-section {
+        padding: 20px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="help-container">
+        <div class="text-center mb-5">
+            <h1><i class="fas fa-question-circle"></i> Help & Support</h1>
+            <p class="lead">Everything you need to know about using grantY effectively</p>
+        </div>
+
+        <!-- Quick Start Guide -->
+        <div class="help-section">
+            <h3><i class="fas fa-rocket"></i> Quick Start Guide</h3>
+            <p>Get started with grantY in just a few simple steps:</p>
+            
+            <div class="step-card">
+                <span class="step-number">1</span>
+                <strong>Choose Your Template</strong>
+                <p>Select from our pre-built templates (NSF, NIH, Startup) or upload your own PDF format for custom analysis.</p>
+            </div>
+            
+            <div class="step-card">
+                <span class="step-number">2</span>
+                <strong>Answer AI-Generated Questions</strong>
+                <p>Our AI analyzes your template and creates relevant questions. Sample answers are provided to help you get started.</p>
+            </div>
+            
+            <div class="step-card">
+                <span class="step-number">3</span>
+                <strong>Generate Your Proposal</strong>
+                <p>Click "Preview & Generate" to let our AI create a professional grant proposal based on your responses.</p>
+            </div>
+            
+            <div class="step-card">
+                <span class="step-number">4</span>
+                <strong>Edit & Export</strong>
+                <p>Review and edit your proposal, then export as HTML (free) or PDF.</p>
+            </div>
+        </div>
+
+        <!-- Features Guide -->
+        <div class="help-section">
+            <h3><i class="fas fa-star"></i> Key Features</h3>
+            
+            <h4><i class="fas fa-robot"></i> AI-Powered Content Generation</h4>
+            <p>Our advanced AI understands grant writing best practices and creates compelling, structured proposals tailored to your specific requirements.</p>
+            
+            <h4><i class="fas fa-upload"></i> Custom Template Upload</h4>
+            <p>Upload any PDF or text file containing grant requirements, and our AI will:</p>
+            <ul>
+                <li>Extract relevant sections and requirements</li>
+                <li>Generate appropriate questions for each section</li>
+                <li>Provide sample answers to guide your responses</li>
+                <li>Create a custom template for future use</li>
+            </ul>
+            
+            <h4><i class="fas fa-search-dollar"></i> Grant Opportunity Discovery</h4>
+            <p>Describe your business or upload a document, and our AI will find relevant funding opportunities, competitions, and grants that match your focus area.</p>
+            
+            <h4><i class="fas fa-edit"></i> Interactive Editor</h4>
+            <p>Edit your proposals with our user-friendly editor featuring:</p>
+            <ul>
+                <li>Auto-save functionality</li>
+                <li>Section-wise progress tracking</li>
+                <li>Real-time content generation</li>
+                <li>Professional formatting</li>
+            </ul>
+        </div>
+
+        <!-- Payment & Download -->
+        <div class="help-section">
+            <h3><i class="fas fa-credit-card"></i> Payment & Downloads</h3>
+            
+            <div class="payment-info">
+                <h4><i class="fas fa-download"></i> How to Download Your PDF</h4>
+                <ol>
+                    <li>Complete your grant proposal and generate content</li>
+                    <li>Go to Preview page and click "Download as PDF"</li>
+                    <li><strong>Free Option:</strong> Enter coupon code </li>
+                    <li><strong>Paid Option:</strong> Pay ₹49 via UPI (Google Pay, PhonePe, Paytm)</li>
+                </ol>
+            </div>
+            
+            <div class="alert-custom alert-tip">
+                <strong><i class="fas fa-gift"></i> 
+            </div>
+            
+            <h4><i class="fas fa-mobile-alt"></i> UPI Payment Steps</h4>
+            <ol>
+                <li>Scan the QR code with any UPI app</li>
+                <li>Enter amount: ₹49</li>
+                <li>Complete the payment</li>
+                <li>Copy the transaction ID from your payment app</li>
+                <li>Enter the transaction ID on our verification page</li>
+                <li>Download your PDF instantly</li>
+            </ol>
+        </div>
+
+        <!-- Troubleshooting -->
+        <div class="help-section">
+            <h3><i class="fas fa-tools"></i> Troubleshooting</h3>
+            
+            <h4><i class="fas fa-exclamation-triangle"></i> Common Issues</h4>
+            
+            <div class="alert-custom alert-warning">
+                <strong>File Upload Issues:</strong>
+                <ul>
+                    <li>Ensure your file is in PDF, TXT, or DOCX format</li>
+                    <li>File size should be under 16MB</li>
+                    <li>Check that the file contains readable text (not just images)</li>
+                </ul>
+            </div>
+            
+            <div class="alert-custom alert-warning">
+                <strong>Content Generation Problems:</strong>
+                <ul>
+                    <li>Make sure you've answered at least some questions</li>
+                    <li>Check your internet connection</li>
+                    <li>Try refreshing the page and generating again</li>
+                    <li>Ensure your answers are substantial (not just single words)</li>
+                </ul>
+            </div>
+            
+            <div class="alert-custom alert-warning">
+                <strong>Payment Verification Issues:</strong>
+                <ul>
+                    <li>Double-check your transaction ID (usually 12+ characters)</li>
+                    <li>Ensure you copied the complete transaction ID</li>
+                    <li>Wait a few minutes after payment before verifying</li>
+                    <li>Use the exact transaction ID from your UPI app</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="help-section">
+            <h3><i class="fas fa-question"></i> Frequently Asked Questions</h3>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>Is grantY completely free to use?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>grantY is free for creating proposals and HTML exports. PDF downloads cost ₹49 or use coupon code for free PDF downloads.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>What file formats can I upload?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>You can upload PDF, TXT, and DOCX files. Our AI will extract text content and analyze it to create custom grant templates.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>How accurate is the AI-generated content?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>Our AI is trained on grant writing best practices and generates professional content. However, we recommend reviewing and customizing the output to match your specific project and requirements.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>Can I edit the generated content?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! In the Preview page, click "Enable Editing" to modify the generated content. You can make changes and save them before downloading.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>What payment methods do you accept?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>We accept all UPI payments including Google Pay, PhonePe, Paytm, and any other UPI-enabled app. Simply scan our QR code to pay ₹49 for PDF downloads.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>How does the opportunity finder work?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>Describe your business/research focus or upload a document, and our AI will analyze it to find relevant grants, competitions, and funding opportunities that match your area of work.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <strong>Is my data secure?</strong>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, we take data security seriously. Your documents and proposals are stored securely and are not shared with third parties. </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips & Best Practices -->
+        <div class="help-section">
+            <h3><i class="fas fa-lightbulb"></i> Tips & Best Practices</h3>
+            
+            <div class="feature-highlight">
+                <h4><i class="fas fa-pen"></i> Writing Effective Responses</h4>
+                <ul>
+                    <li>Be specific and detailed in your answers</li>
+                    <li>Use the sample answers as guidance, but customize them</li>
+                    <li>Include measurable goals and outcomes</li>
+                    <li>Mention relevant experience and qualifications</li>
+                    <li>Justify budget requests with clear reasoning</li>
+                </ul>
+            </div>
+            
+            <div class="feature-highlight">
+                <h4><i class="fas fa-file-alt"></i> Custom Template Tips</h4>
+                <ul>
+                    <li>Upload complete grant guidelines for best results</li>
+                    <li>Ensure text is clear and readable in your PDF</li>
+                    <li>Include section headers and question prompts</li>
+                    <li>Review AI-generated questions for accuracy</li>
+                </ul>
+            </div>
+            
+            <div class="alert-custom alert-success">
+                <strong><i class="fas fa-check-circle"></i> Pro Tip:</strong> Save your work frequently using the auto-save feature, and always preview your generated content before downloading the final PDF.
+            </div>
+        </div>
+
+        <!-- Contact & Support -->
+        <div class="help-section">
+            <h3><i class="fas fa-headset"></i> Contact & Support</h3>
+            
+            <div class="contact-card">
+                <h4><i class="fas fa-envelope"></i> Need More Help?</h4>
+                <p>If you can't find the answer to your question here, we're here to help!</p>
+                <div class="mt-3">
+                    <a href="mailto:sujayvk.btech23@rvu.edu.in" class="btn btn-primary me-3">
+                        <i class="fas fa-envelope"></i> Email Support
+                    </a>
+                    <a href="https://github.com/SujayKulkarni-2211/granty/issues" class="btn btn-outline-primary" target="_blank">
+                        <i class="fab fa-github"></i> Report Bug
+                    </a>
+                </div>
+                <p class="mt-3"><small>We typically respond within 24 hours</small></p>
+            </div>
+        </div>
+
+        <!-- Version Info -->
+        <div class="help-section">
+            <h3><i class="fas fa-info-circle"></i> About grantY</h3>
+            <p>grantY is an AI-powered grant writing assistant designed to help researchers, startups, and organizations create professional grant proposals efficiently.</p>
+            
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <h4><i class="fas fa-users"></i></h4>
+                        <p><strong>For Everyone</strong><br>Researchers, startups, NGOs</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <h4><i class="fas fa-robot"></i></h4>
+                        <p><strong>AI-Powered</strong><br>Advanced language models</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <h4><i class="fas fa-globe"></i></h4>
+                        <p><strong>Web-Based</strong><br>Access anywhere, anytime</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleFAQ(element) {
+    const faqItem = element.parentElement;
+    const faqAnswer = faqItem.querySelector('.faq-answer');
+    const isActive = element.classList.contains('active');
+    
+    // Close all FAQ items
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.classList.remove('active');
+        q.parentElement.querySelector('.faq-answer').classList.remove('active');
+    });
+    
+    // Open clicked item if it wasn't active
+    if (!isActive) {
+        element.classList.add('active');
+        faqAnswer.classList.add('active');
+    }
+}
+
+// Add smooth scrolling for anchor links
+document.addEventListener('DOMContentLoaded', function() {
+    // Highlight current section in URL
+    const hash = window.location.hash;
+    if (hash) {
+        const element = document.querySelector(hash);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            element.style.animation = 'pulse 2s ease-in-out';
+        }
+    }
+    
+    // Add copy functionality for code blocks
+    const codeBlocks = document.querySelectorAll('.code-block');
+    codeBlocks.forEach(block => {
+        block.style.cursor = 'pointer';
+        block.title = 'Click to copy';
+        block.addEventListener('click', function() {
+            const text = this.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                this.style.background = 'rgba(46, 204, 113, 0.3)';
+                setTimeout(() => {
+                    this.style.background = 'rgba(0, 0, 0, 0.3)';
+                }, 1000);
+            });
+        });
+    });
+});
+
+// Add pulse animation for highlighted elements
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0%, 100% { 
+            background: rgba(255, 255, 255, 0.05); 
+        }
+        50% { 
+            background: rgba(76, 201, 240, 0.2); 
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

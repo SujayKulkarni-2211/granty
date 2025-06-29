@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ draft.title }} - Grant Proposal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .content-display h1, .content-display h2, .content-display h3 {
+            color: #2c3e50;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .content-display h1 {
+            font-size: 2.2rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .content-display h2 {
+            font-size: 1.8rem;
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        
+        .content-display p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+            font-size: 16px;
+        }
+        
+        .content-display ul, .content-display ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        
+        .content-display li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 6rem;
+            color: rgba(52, 152, 219, 0.1);
+            font-weight: bold;
+            z-index: -1;
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 2px solid #ecf0f1;
+            color: #7f8c8d;
+        }
+        
+        .no-print {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(231, 76, 60, 0.3);
+            animation: pulse 2s infinite;
+            z-index: 1000;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Disable all print functionality */
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            body::before {
+                content: "🚫 PRINTING DISABLED - Purchase PDF to download" !important;
+                position: fixed !important;
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                font-size: 2rem !important;
+                color: red !important;
+                font-weight: bold !important;
+                visibility: visible !important;
+                z-index: 9999 !important;
+            }
+        }
+        
+        /* Disable right-click context menu */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Prevent text selection */
+        .content-display {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">PREVIEW ONLY</div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>{{ draft.title }}</h1>
+            <p class="text-muted">Preview Generated on {{ draft.updated_at }}</p>
+            <div class="alert alert-warning">
+                <strong>⚠️ This is a preview version only</strong><br>
+                Purchase the full PDF version to get the complete, formatted document.
+            </div>
+        </div>
+        
+        <div class="content-display">
+            {{ draft.generated_content|safe }}
+        </div>
+        
+        <div class="footer">
+            <div class="alert alert-info">
+                <h4>🔒 Want the Full PDF Version?</h4>
+                <p>This preview shows your complete grant proposal content. To download the professionally formatted PDF version:</p>
+                <a href="/preview/{{ draft.id }}" class="btn btn-primary btn-lg">
+                    💰 Purchase PDF (₹49) or Use Coupon
+                </a>
+            </div>
+            <p><small>Generated with Grant Writing Assistant | Secure Payment via UPI</small></p>
+        </div>
+    </div>
+    
+    <div class="no-print">
+        🚫 Print Disabled
+    </div>
+
+    <script>
+        // Disable right-click context menu
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            alert('🚫 Right-click is disabled. Purchase the PDF version to download.');
+            return false;
+        });
+        
+        // Disable F12, Ctrl+Shift+I, Ctrl+U
+        document.addEventListener('keydown', function(e) {
+            // F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+                alert('🚫 Developer tools are disabled. Purchase the PDF version.');
+                return false;
+            }
+            
+            // Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                e.preventDefault();
+                alert('🚫 Developer tools are disabled. Purchase the PDF version.');
+                return false;
+            }
+            
+            // Ctrl+U
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+                alert('🚫 View source is disabled. Purchase the PDF version.');
+                return false;
+            }
+            
+            // Ctrl+S
+            if (e.ctrlKey && e.keyCode === 83) {
+                e.preventDefault();
+                alert('🚫 Save is disabled. Purchase the PDF version.');
+                return false;
+            }
+            
+            // Ctrl+A
+            if (e.ctrlKey && e.keyCode === 65) {
+                e.preventDefault();
+                alert('🚫 Select all is disabled. Purchase the PDF version.');
+                return false;
+            }
+            
+            // Ctrl+P
+            if (e.ctrlKey && e.keyCode === 80) {
+                e.preventDefault();
+                alert('🚫 Printing is disabled. Purchase the PDF version for ₹49 or use coupon "grantyadmin".');
+                return false;
+            }
+        });
+        
+        // Disable drag and drop
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Show purchase reminder periodically
+        setInterval(function() {
+            if (Math.random() < 0.1) { // 10% chance every 5 seconds
+                const reminder = document.createElement('div');
+                reminder.style.cssText = `
+                    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+                    background: #f39c12; color: white; padding: 10px 20px;
+                    border-radius: 25px; z-index: 9999; font-weight: bold;
+                    animation: fadeInOut 3s ease-in-out;
+                `;
+                reminder.innerHTML = '💰 Get the full PDF for just ₹49!';
+                document.body.appendChild(reminder);
+                
+                setTimeout(() => {
+                    if (reminder.parentNode) reminder.parentNode.removeChild(reminder);
+                }, 3000);
+            }
+        }, 5000);
+        
+        // Add CSS animation for fade effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInOut {
+                0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                50% { opacity: 1; transform: translateX(-50%) translateY(0px); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

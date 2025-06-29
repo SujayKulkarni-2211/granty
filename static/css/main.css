@@ -1,0 +1,69 @@
+/* Main Styles */
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+  }
+  
+  .navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .jumbotron {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  }
+  
+  .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+  
+  .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 1rem;
+  }
+  
+  .list-group-item:first-child {
+    border-top: none;
+  }
+  
+  .list-group-item:last-child {
+    border-bottom: none;
+  }
+  
+  .btn-primary {
+    background-color: #4a6fdc;
+    border-color: #4a6fdc;
+  }
+  
+  .btn-primary:hover {
+    background-color: #3a5fc9;
+    border-color: #3a5fc9;
+  }
+  
+  .btn-outline-primary {
+    color: #4a6fdc;
+    border-color: #4a6fdc;
+  }
+  
+  .btn-outline-primary:hover {
+    background-color: #4a6fdc;
+    border-color: #4a6fdc;
+  }
+  
+  .footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+  }
+  

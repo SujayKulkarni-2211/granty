@@ -85,9 +85,6 @@ gunicorn==21.2.0
 psycopg2-binary==2.9.9  # For PostgreSQL
 redis==5.0.1  # For caching
 
-# LangChain (optional - for advanced AI features)
-langchain==0.0.330
-langchain-google-genai==0.0.6
 
 # Additional utilities
 six==1.16.0

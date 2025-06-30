@@ -38,6 +38,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = app.config.get('DATABASE_URL', 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+# CRITICAL FIX: Initialize database tables in app context
+with app.app_context():
+    try:
+        # Create all tables if they don't exist
+        db.create_all()
+        print("✓ Database tables created/verified")
+        
+        # Check if templates exist, if not initialize them
+        if Template.query.count() == 0:
+            storage.initialize_comprehensive_templates()
+            print("✓ Templates initialized")
+        else:
+            print("✓ Templates already exist")
+            
+    except Exception as e:
+        print(f"Error initializing database: {e}")
+        # Don't raise the error, let the app start anyway
+        pass
+
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)

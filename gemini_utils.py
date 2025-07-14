@@ -5,6 +5,7 @@ from typing import Optional, List, Dict, Any
 import requests
 from bs4 import BeautifulSoup
 from config import GEMINI_API_KEY
+import markdown
 
 # Configure Gemini API
 if not GEMINI_API_KEY:
@@ -12,14 +13,14 @@ if not GEMINI_API_KEY:
 
 genai.configure(api_key=GEMINI_API_KEY)
 
+# Simple in-memory conversation storage
+conversation_memory = {}
+
 # Initialize LangChain components
 try:
     from langchain_google_genai import ChatGoogleGenerativeAI
-    from langchain.memory import ConversationBufferMemory
-    from langchain.tools import BaseTool
-    from langchain.agents import create_react_agent, AgentExecutor
-    from langchain.prompts import PromptTemplate
-    from langchain.callbacks.manager import CallbackManagerForToolRun
+    from langchain.memory import ConversationBufferWindowMemory
+    from langchain.schema import HumanMessage, AIMessage
     
     # Initialize LLM
     llm = ChatGoogleGenerativeAI(
@@ -28,214 +29,199 @@ try:
         temperature=0.7
     )
     
-    # Initialize memory
-    memory = ConversationBufferMemory(
-        memory_key="chat_history",
-        return_messages=True
-    )
-    
     print("✓ LangChain components initialized successfully")
     LANGCHAIN_AVAILABLE = True
     
 except Exception as e:
     print(f"⚠️ LangChain initialization failed: {e}")
-    print("Falling back to direct Gemini API")
+    print("Falling back to direct Gemini API with manual memory")
     llm = None
-    memory = None
     LANGCHAIN_AVAILABLE = False
 
-# Custom Tools for LangChain Agent
-class ProjectEditorTool(BaseTool):
-    name: str = "project_editor"
-    description: str = "Edit project content, sections, or answers based on user instructions"
+def get_conversation_memory(project_id: str) -> List[Dict]:
+    """Get conversation history for a project"""
+    if project_id not in conversation_memory:
+        conversation_memory[project_id] = []
+    return conversation_memory[project_id]
+
+def add_to_conversation_memory(project_id: str, user_message: str, ai_response: str):
+    """Add message pair to conversation memory"""
+    if project_id not in conversation_memory:
+        conversation_memory[project_id] = []
     
-    def _run(
-        self,
-        query: str,
-        run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> str:
-        """Execute project editing task."""
-        try:
-            # This integrates with project editing logic
-            return f"Project editing analysis: {query}\n\nRecommendation: The requested changes have been analyzed and can be implemented in the project editor."
-        except Exception as e:
-            return f"Error analyzing edit request: {str(e)}"
-
-class TemplateGeneratorTool(BaseTool):
-    name: str = "template_generator"
-    description: str = "Generate new templates or modify existing ones"
+    conversation_memory[project_id].append({
+        'user': user_message,
+        'ai': ai_response,
+        'timestamp': datetime.now().isoformat()
+    })
     
-    def _run(
-        self,
-        query: str,
-        run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> str:
-        """Generate or modify templates."""
-        try:
-            return f"Template generation task: {query}\n\nA new template structure has been created based on your requirements."
-        except Exception as e:
-            return f"Error generating template: {str(e)}"
+    # Keep only last 10 exchanges to prevent memory overflow
+    if len(conversation_memory[project_id]) > 10:
+        conversation_memory[project_id] = conversation_memory[project_id][-10:]
 
-class OpportunityFinderTool(BaseTool):
-    name: str = "opportunity_finder"
-    description: str = "Find funding opportunities and grants"
-    
-    def _run(
-        self,
-        query: str,
-        run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> str:
-        """Find funding opportunities."""
-        try:
-            opportunities = find_funding_opportunities(query)
-            return f"Found {len(opportunities)} relevant opportunities for: {query}"
-        except Exception as e:
-            return f"Error finding opportunities: {str(e)}"
-
-class ContentGeneratorTool(BaseTool):
-    name: str = "content_generator"
-    description: str = "Generate content for proposals and documents"
-    
-    def _run(
-        self,
-        query: str,
-        run_manager: Optional[CallbackManagerForToolRun] = None,
-    ) -> str:
-        """Generate content."""
-        try:
-            return f"Content generated for: {query}\n\nProfessional content has been created based on your requirements."
-        except Exception as e:
-            return f"Error generating content: {str(e)}"
-
-# Initialize tools and agent
-tools = [
-    ProjectEditorTool(),
-    TemplateGeneratorTool(),
-    OpportunityFinderTool(),
-    ContentGeneratorTool()
-]
-
-agent = None
-if LANGCHAIN_AVAILABLE and llm:
-    try:
-        # Create agent prompt
-        prompt = PromptTemplate(
-            input_variables=["tools", "tool_names", "input", "agent_scratchpad"],
-            template="""You are an AI assistant specializing in grant writing and business proposals.
-
-You have access to these tools:
-{tools}
-
-Tool names: {tool_names}
-
-Use this format:
-Question: {input}
-Thought: I should think about what the user needs
-Action: [tool_name]
-Action Input: [input for the tool]
-Observation: [tool result]
-Thought: I can now provide a helpful response
-Final Answer: [comprehensive answer to the user]
-
-Question: {input}
-{agent_scratchpad}"""
-        )
-        
-        # Create agent
-        react_agent = create_react_agent(llm, tools, prompt)
-        agent = AgentExecutor(
-            agent=react_agent,
-            tools=tools,
-            memory=memory,
-            verbose=False,
-            handle_parsing_errors=True,
-            max_iterations=3
-        )
-        print("✓ LangChain agent initialized successfully")
-        
-    except Exception as e:
-        print(f"⚠️ Agent initialization failed: {e}")
-        agent = None
-
-# Main chat function
-def chat_with_ai(message: str, project_context: Optional[Dict] = None) -> str:
+def chat_with_gemini_direct(message: str, project_context: Optional[Dict] = None, project_id: str = None) -> str:
     """
-    Main chat interface - uses agent if available, otherwise direct Gemini
+    Enhanced chat with memory and context - keeping original function name for compatibility
     """
-    if agent and LANGCHAIN_AVAILABLE:
-        return chat_with_agent(message, project_context)
+    if LANGCHAIN_AVAILABLE and llm:
+        return chat_with_langchain_memory(message, project_context, project_id)
     else:
-        return chat_with_gemini_direct(message, project_context)
+        return chat_with_manual_memory(message, project_context, project_id)
 
-def chat_with_agent(message: str, project_context: Optional[Dict] = None) -> str:
+def chat_with_langchain_memory(message: str, project_context: Optional[Dict] = None, project_id: str = None) -> str:
     """
-    Chat using LangChain agent with tools
+    Chat using LangChain with proper memory management
     """
     try:
-        # Prepare context-aware message
-        if project_context:
-            enhanced_message = f"""
-Project Context:
-- Title: {project_context.get('title', 'Unknown')}
-- Type: {project_context.get('project_type', 'Unknown')}
-- Has Content: {'Yes' if project_context.get('generated_content') else 'No'}
-
-User Request: {message}
-
-Please provide specific, actionable advice for this project.
-"""
-        else:
-            enhanced_message = message
+        # Create memory for this project
+        memory = ConversationBufferWindowMemory(
+            k=10,  # Keep last 10 exchanges
+            return_messages=True
+        )
         
-        # Get response from agent
-        response = agent.invoke({"input": enhanced_message})
-        return response.get("output", "I couldn't process your request properly.")
+        # Load previous conversation into memory
+        if project_id:
+            history = get_conversation_memory(project_id)
+            for exchange in history:
+                memory.chat_memory.add_user_message(exchange['user'])
+                memory.chat_memory.add_ai_message(exchange['ai'])
+        
+        # Build context-aware prompt
+        system_context = build_system_context(project_context, project_id)
+        
+        # Get memory variables
+        memory_vars = memory.load_memory_variables({})
+        chat_history = memory_vars.get('history', [])
+        
+        # Create comprehensive prompt
+        full_prompt = f"""{system_context}
+
+CONVERSATION HISTORY:
+{format_chat_history(chat_history)}
+
+CURRENT USER MESSAGE: {message}
+
+Please respond helpfully based on the project context and conversation history:"""
+
+        # Get response from LangChain
+        response = llm.invoke([HumanMessage(content=full_prompt)])
+        ai_response = response.content
+        
+        # Save to memory
+        if project_id:
+            add_to_conversation_memory(project_id, message, ai_response)
+        
+        return ai_response
         
     except Exception as e:
-        print(f"Agent error: {e}")
-        return chat_with_gemini_direct(message, project_context)
+        print(f"LangChain chat error: {e}")
+        return chat_with_manual_memory(message, project_context, project_id)
 
-def chat_with_gemini_direct(message: str, project_context: Optional[Dict] = None) -> str:
+def chat_with_manual_memory(message: str, project_context: Optional[Dict] = None, project_id: str = None) -> str:
     """
-    Direct chat with Gemini API
+    Direct Gemini chat with manual memory management
     """
     try:
         model = genai.GenerativeModel('gemini-2.5-flash')
         
-        if project_context:
-            prompt = f"""
-You are an expert AI assistant for grant writing and business proposals.
-
-Project Context:
-- Title: {project_context.get('title', 'Unknown')}
-- Type: {project_context.get('project_type', 'Unknown')}
-- Current Content: {project_context.get('generated_content', 'No content yet')[:500]}...
-
-User Question: {message}
-
-Provide specific, actionable advice for improving this project. Include:
-- Concrete suggestions for content improvement
-- Missing elements that should be added
-- Structure and formatting recommendations
-- Best practices for this type of document
-
-Be helpful and specific in your response.
-"""
-        else:
-            prompt = f"""
-You are an expert AI assistant for grant writing and business proposals.
-
-User Question: {message}
-
-Provide helpful, professional advice about grant writing, business proposals, or document creation.
-"""
+        # Build context
+        system_context = build_system_context(project_context, project_id)
         
-        response = model.generate_content(prompt)
-        return response.text
+        # Get conversation history
+        history_text = ""
+        if project_id:
+            history = get_conversation_memory(project_id)
+            if history:
+                history_text = "\nPREVIOUS CONVERSATION:\n"
+                for exchange in history[-5:]:  # Last 5 exchanges
+                    history_text += f"User: {exchange['user']}\nAI: {exchange['ai'][:200]}...\n\n"
+        
+        # Create full prompt
+        full_prompt = f"""{system_context}
+
+{history_text}
+
+CURRENT USER MESSAGE: {message}
+
+Based on our conversation history and the project context, please provide a helpful, specific response:"""
+
+        response = model.generate_content(full_prompt)
+        ai_response = response.text if response and response.text else "I'm having trouble generating a response. Please try again."
+        
+        # Save to memory
+        if project_id:
+            add_to_conversation_memory(project_id, message, ai_response)
+        
+        return ai_response
         
     except Exception as e:
         print(f"Gemini API error: {e}")
-        return "I'm having trouble connecting to the AI service. Please check your API configuration and try again."
+        return "I'm having trouble connecting to the AI service. Please check your connection and try again."
+
+def build_system_context(project_context: Optional[Dict] = None, project_id: str = None) -> str:
+    """Build comprehensive system context"""
+    
+    context_parts = ["""You are an expert AI assistant for grantY, specializing in grant writing, business proposals, and document creation. You have memory of our conversation and can reference previous topics.
+
+CORE CAPABILITIES:
+• Grant writing and funding strategies
+• Business proposal development
+• Document structure and formatting
+• Finding funding opportunities
+• Professional writing assistance
+• Project planning and organization
+
+MEMORY INSTRUCTIONS:
+• Remember what we've discussed before
+• Reference previous questions and topics
+• Build on our conversation history
+• Provide continuity in advice"""]
+
+    if project_context:
+        context_parts.append(f"""
+CURRENT PROJECT CONTEXT:
+• Title: {project_context.get('title', 'Unknown Project')}
+• Type: {project_context.get('project_type', 'Unknown').replace('_', ' ').title()}
+• Status: {'Has generated content' if project_context.get('generated_content') else 'Content not yet generated'}
+• Sections: {len(project_context.get('sections', []))} sections available
+• Progress: {len([v for v in project_context.get('answers', {}).values() if str(v).strip()])} questions answered""")
+
+        # Add content preview if available
+        if project_context.get('generated_content'):
+            content_preview = project_context['generated_content'][:300]
+            context_parts.append(f"""
+CURRENT CONTENT PREVIEW:
+{content_preview}...""")
+        
+        # Add section information
+        sections = project_context.get('sections', [])
+        if sections:
+            section_info = []
+            for section in sections[:3]:
+                section_info.append(f"• {section.get('title', 'Unknown Section')}")
+            context_parts.append(f"""
+DOCUMENT SECTIONS:
+{chr(10).join(section_info)}
+{"• ... and more sections" if len(sections) > 3 else ""}""")
+
+    return '\n'.join(context_parts)
+
+def format_chat_history(history) -> str:
+    """Format chat history for prompt"""
+    if not history:
+        return "No previous conversation."
+    
+    formatted = []
+    for msg in history[-6:]:  # Last 6 messages
+        if hasattr(msg, 'content'):
+            role = "User" if msg.__class__.__name__ == "HumanMessage" else "AI"
+            content = msg.content[:150] + "..." if len(msg.content) > 150 else msg.content
+            formatted.append(f"{role}: {content}")
+    
+    return '\n'.join(formatted)
+
+# Import datetime for memory timestamps
+from datetime import datetime
 
 def restructure_content_with_ai(content: str, instructions: str) -> str:
     """
@@ -470,24 +456,32 @@ def generate_basic_content(draft: Dict, template: Dict) -> str:
 
 def find_funding_opportunities(query: str) -> List[Dict]:
     """
-    Find funding opportunities using web search and AI
+    Find funding opportunities using AI with specific focus on the query
     """
     try:
         model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = f"""
-Based on the query "{query}", suggest relevant funding opportunities.
+Based on the query "{query}", suggest relevant funding opportunities that would be realistic and helpful.
 
-Create realistic funding opportunities that would match this query.
-Consider grants, competitions, accelerators, and other funding sources.
+Analyze the query to understand the project type and suggest appropriate funding sources such as:
+- Government grants (federal, state, local)
+- Private foundations
+- Corporate grants and CSR programs
+- Industry-specific funding
+- Research grants
+- Innovation and startup funding
+- Social impact funding
 
-Return a JSON array with 3-5 opportunities, each having:
+Create realistic funding opportunities that would match this specific query.
+
+Return a JSON array with 4-6 opportunities, each having:
 - title: opportunity name
-- description: brief description
-- link: realistic URL
+- description: brief description (2-3 sentences)
+- link: realistic URL or organization name
 - deadline: application deadline
-- amount: funding amount
-- remarks: additional notes
+- amount: funding amount range
+- remarks: additional notes about eligibility
 
 Return only valid JSON.
 """
@@ -563,8 +557,16 @@ def test_gemini_connection() -> bool:
         print(f"Gemini test failed: {e}")
         return False
 
-print("✓ Gemini Utils loaded successfully")
+# Clear conversation memory function for debugging
+def clear_conversation_memory(project_id: str = None):
+    """Clear conversation memory for a project or all projects"""
+    if project_id:
+        conversation_memory.pop(project_id, None)
+    else:
+        conversation_memory.clear()
+
+print("✓ Enhanced Gemini Utils loaded with memory support")
 if LANGCHAIN_AVAILABLE:
-    print("✓ LangChain agent available for advanced features")
+    print("✓ LangChain available with memory management")
 else:
-    print("ℹ️ Using direct Gemini API (LangChain not available)")
+    print("ℹ️ Using direct Gemini API with manual memory")

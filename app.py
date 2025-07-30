@@ -712,6 +712,7 @@ def extract_text_from_pdf(file_path):
         print(f"Error extracting PDF: {e}")
         return ""
 
+        
 def html_to_docx(html_content, title):
     """Convert HTML content to DOCX format"""
     if not DOCX_AVAILABLE:

@@ -508,6 +508,25 @@ body {
 const draftId = "{{ draft.id }}";
 let isEditMode = false;
 
+// ADD THIS: Content cleaning function
+function cleanContent(content) {
+    if (!content) return content;
+    
+    // Remove ```html and ``` markers (case insensitive)
+    content = content.replace(/```html\s*\n?/gi, '');
+    content = content.replace(/```\s*$/gm, '');
+    content = content.replace(/```\s*\n/g, '');
+    
+    // Remove any other code block markers like ```markdown, ```text, etc.
+    content = content.replace(/```\w*\s*\n?/gi, '');
+    
+    // Clean up extra whitespace that might be left
+    content = content.replace(/\n\s*\n\s*\n/g, '\n\n');
+    content = content.trim();
+    
+    return content;
+}
+
 function generateContent() {
     console.log('Generate content clicked for draft:', draftId);
     
@@ -535,7 +554,9 @@ function generateContent() {
         contentContainer.style.display = 'block';
         
         if (data.success) {
-            contentContainer.innerHTML = `<div id="editable-content" class="content-display">${data.content}</div>`;
+            // CHANGE THIS LINE: Clean the content before displaying
+            const cleanedContent = cleanContent(data.content);
+            contentContainer.innerHTML = `<div id="editable-content" class="content-display">${cleanedContent}</div>`;
             showAlert('🎉 Content generated successfully!', 'success');
         } else {
             showAlert('❌ Error: ' + (data.error || 'Unknown error'), 'danger');
@@ -661,6 +682,19 @@ function showAlert(message, type) {
         }
     }, 5000);
 }
+
+// ADD THIS: Clean existing content when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const editableContent = document.getElementById('editable-content');
+    if (editableContent) {
+        const currentContent = editableContent.innerHTML;
+        const cleanedContent = cleanContent(currentContent);
+        if (cleanedContent !== currentContent) {
+            editableContent.innerHTML = cleanedContent;
+            console.log('Cleaned existing content on page load');
+        }
+    }
+});
 
 // Add loading states to download buttons
 document.querySelectorAll('.download-option').forEach(option => {

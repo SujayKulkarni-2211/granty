@@ -28,6 +28,44 @@ except ImportError:
     print("Warning: python-docx not available. DOCX downloads will not work.")
     DOCX_AVAILABLE = False
 import re
+try:
+    from bs4 import BeautifulSoup
+    BS4_AVAILABLE = True
+except ImportError:
+    print("Warning: BeautifulSoup4 not available. HTML parsing will be limited.")
+    BS4_AVAILABLE = False
+try:
+    from bs4 import BeautifulSoup
+    BS4_AVAILABLE = True
+    print("✓ BeautifulSoup4 available for better HTML parsing")
+except ImportError:
+    BS4_AVAILABLE = False
+    print("⚠ BeautifulSoup4 not available. HTML parsing will be basic.")
+
+# Don't import weasyprint at module level - import only when needed
+WEASYPRINT_AVAILABLE = False
+PDFKIT_AVAILABLE = False
+
+# Test for weasyprint availability without importing
+try:
+    import importlib
+    importlib.import_module('weasyprint')
+    WEASYPRINT_AVAILABLE = True
+    print("✓ WeasyPrint available for advanced PDF generation")
+except (ImportError, OSError) as e:
+    WEASYPRINT_AVAILABLE = False
+    print(f"⚠ WeasyPrint not available: {e}")
+
+# Test for pdfkit availability
+try:
+    import pdfkit
+    PDFKIT_AVAILABLE = True
+    print("✓ pdfkit available for PDF generation")
+except ImportError:
+    PDFKIT_AVAILABLE = False
+    print("⚠ pdfkit not available")
+
+print("✓ PDF/DOCX conversion setup complete with available libraries")
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -711,15 +749,248 @@ def extract_text_from_pdf(file_path):
     except Exception as e:
         print(f"Error extracting PDF: {e}")
         return ""
+def clean_and_prepare_html(html_content):
+    """
+    Clean HTML content and prepare it for conversion while preserving formatting
+    """
+    if not html_content:
+        return html_content
+    
+    import re
+    
+    print(f"Before cleaning: {html_content[:100]}...")
+    
+    # Remove ```html and ``` markers but keep the HTML content
+    content = re.sub(r'```html\s*\n?', '', html_content, flags=re.IGNORECASE)
+    content = re.sub(r'```\s*$', '', content, flags=re.MULTILINE)
+    content = re.sub(r'```\s*\n', '', content)
+    content = re.sub(r'```\w*\s*\n?', '', content, flags=re.IGNORECASE)
+    
+    # Also remove any markdown code block markers
+    content = re.sub(r'^\s*```.*?$', '', content, flags=re.MULTILINE)
+    
+    # Clean up extra whitespace
+    content = re.sub(r'\n\s*\n\s*\n', '\n\n', content)
+    content = content.strip()
+    
+    print(f"After cleaning: {content[:100]}...")
+    
+    return content
 
+# Also update the PDF generation function to be more robust
+def generate_pdf_from_html_reportlab(html_content, title):
+    """
+    Generate PDF using reportlab with better content handling
+    """
+    try:
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
         
-def html_to_docx(html_content, title):
-    """Convert HTML content to DOCX format"""
+        print(f"ReportLab PDF - Input content: {html_content[:100]}...")
+        
+        doc = SimpleDocTemplate(temp_file.name, pagesize=letter)
+        styles = getSampleStyleSheet()
+        story = []
+        
+        # Add title
+        title_style = styles['Title']
+        story.append(Paragraph(title, title_style))
+        story.append(Spacer(1, 20))
+        
+        # Process content - handle HTML tags better
+        import re
+        
+        content = html_content
+        
+        # Convert HTML headers to formatted text
+        content = re.sub(r'<h1>(.*?)</h1>', r'\n\n<b><font size="16">\1</font></b>\n\n', content, flags=re.DOTALL)
+        content = re.sub(r'<h2>(.*?)</h2>', r'\n\n<b><font size="14">\1</font></b>\n\n', content, flags=re.DOTALL)
+        content = re.sub(r'<h3>(.*?)</h3>', r'\n\n<b><font size="12">\1</font></b>\n\n', content, flags=re.DOTALL)
+        
+        # Preserve basic formatting
+        content = re.sub(r'<strong>(.*?)</strong>', r'<b>\1</b>', content, flags=re.DOTALL)
+        content = re.sub(r'<em>(.*?)</em>', r'<i>\1</i>', content, flags=re.DOTALL)
+        
+        # Handle line breaks
+        content = re.sub(r'<br\s*/?>', '\n', content)
+        content = re.sub(r'</p>', '\n\n', content)
+        content = re.sub(r'<p[^>]*>', '', content)
+        
+        # Remove remaining HTML tags
+        content = re.sub(r'<[^>]+>', '', content)
+        
+        # Decode HTML entities
+        content = content.replace('&lt;', '<').replace('&gt;', '>').replace('&amp;', '&')
+        content = content.replace('&nbsp;', ' ')
+        
+        print(f"ReportLab PDF - Processed content: {content[:200]}...")
+        
+        # Split into paragraphs
+        paragraphs = content.split('\n\n')
+        
+        for para in paragraphs:
+            para = para.strip()
+            if para:
+                try:
+                    # Handle very long paragraphs
+                    if len(para) > 2000:
+                        # Split long paragraphs
+                        chunks = [para[i:i+2000] for i in range(0, len(para), 2000)]
+                        for chunk in chunks:
+                            story.append(Paragraph(chunk, styles['Normal']))
+                            story.append(Spacer(1, 12))
+                    else:
+                        story.append(Paragraph(para, styles['Normal']))
+                        story.append(Spacer(1, 12))
+                except Exception as e:
+                    print(f"Error with paragraph: {e}")
+                    # Escape problematic characters
+                    safe_para = para.replace('<', '&lt;').replace('>', '&gt;').replace('&', '&amp;')
+                    safe_para = ''.join(char for char in safe_para if ord(char) < 128)  # Remove non-ASCII
+                    try:
+                        story.append(Paragraph(safe_para[:1000], styles['Normal']))
+                        story.append(Spacer(1, 12))
+                    except:
+                        # Skip problematic paragraphs
+                        print(f"Skipping problematic paragraph: {para[:50]}...")
+                        continue
+        
+        doc.build(story)
+        print("✓ PDF generated using ReportLab")
+        return temp_file.name
+        
+    except Exception as e:
+        print(f"Error generating PDF with reportlab: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+def generate_pdf_from_html_improved(html_content, title):
+    """
+    Generate PDF from HTML with the best available method
+    """
+    try:
+        # Clean content first
+        clean_html = clean_and_prepare_html(html_content)
+        
+        # Try weasyprint first (best quality) - import only when needed
+        if WEASYPRINT_AVAILABLE:
+            try:
+                import weasyprint
+                
+                # Prepare full HTML document
+                full_html = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body {{ 
+                            font-family: Arial, sans-serif; 
+                            line-height: 1.6; 
+                            color: #333; 
+                            margin: 40px;
+                            max-width: none;
+                        }}
+                        h1 {{ 
+                            color: #2c3e50; 
+                            border-bottom: 2px solid #3498db; 
+                            padding-bottom: 10px; 
+                            page-break-after: avoid;
+                        }}
+                        h2 {{ 
+                            color: #34495e; 
+                            border-bottom: 1px solid #3498db; 
+                            padding-bottom: 5px; 
+                            page-break-after: avoid;
+                        }}
+                        h3 {{ color: #2c3e50; page-break-after: avoid; }}
+                        p {{ margin-bottom: 1em; text-align: justify; }}
+                        ul, ol {{ margin: 1em 0; padding-left: 2em; }}
+                        strong {{ font-weight: bold; }}
+                        em {{ font-style: italic; }}
+                        @page {{ margin: 1in; }}
+                    </style>
+                </head>
+                <body>
+                    <h1>{title}</h1>
+                    {clean_html}
+                </body>
+                </html>
+                """
+                
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+                weasyprint.HTML(string=full_html).write_pdf(temp_file.name)
+                print("✓ PDF generated using WeasyPrint")
+                return temp_file.name
+                
+            except Exception as e:
+                print(f"WeasyPrint failed: {e}, trying next method...")
+        
+        # Try pdfkit as alternative
+        if PDFKIT_AVAILABLE:
+            try:
+                import pdfkit
+                
+                # Prepare full HTML document
+                full_html = f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+                        h1 {{ color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }}
+                        h2 {{ color: #34495e; border-bottom: 1px solid #3498db; padding-bottom: 5px; }}
+                        p {{ margin-bottom: 1em; text-align: justify; }}
+                        strong {{ font-weight: bold; }}
+                    </style>
+                </head>
+                <body>
+                    <h1>{title}</h1>
+                    {clean_html}
+                </body>
+                </html>
+                """
+                
+                options = {
+                    'page-size': 'A4',
+                    'margin-top': '0.75in',
+                    'margin-right': '0.75in',
+                    'margin-bottom': '0.75in',
+                    'margin-left': '0.75in',
+                    'encoding': "UTF-8",
+                    'no-outline': None,
+                    'enable-local-file-access': None
+                }
+                
+                temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
+                pdfkit.from_string(full_html, temp_file.name, options=options)
+                print("✓ PDF generated using pdfkit")
+                return temp_file.name
+                
+            except Exception as e:
+                print(f"pdfkit failed: {e}, using reportlab fallback...")
+        
+        # Fallback to reportlab (always available)
+        return generate_pdf_from_html_reportlab(clean_html, title)
+        
+    except Exception as e:
+        print(f"Error in PDF generation: {e}")
+        return generate_pdf_from_html_reportlab(html_content, title)
+
+
+def html_to_docx_improved(html_content, title):
+    """
+    Convert HTML content to DOCX format with better formatting preservation
+    """
     if not DOCX_AVAILABLE:
         print("Error: python-docx not available")
         return None
         
     try:
+        # Clean content
+        clean_html = clean_and_prepare_html(html_content)
+        
         # Create a new Document
         doc = DocxDocument()
         
@@ -727,60 +998,78 @@ def html_to_docx(html_content, title):
         title_paragraph = doc.add_heading(title, 0)
         title_paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         
-        # Clean HTML and convert to plain text with basic formatting
-        # Remove HTML tags but preserve structure
-        clean_text = re.sub(r'<[^>]+>', '', html_content)
-        
-        # Split into paragraphs
-        paragraphs = clean_text.split('\n\n')
-        
-        for para in paragraphs:
-            if para.strip():
-                # Check if it's a heading (simple heuristic)
-                if len(para.strip()) < 100 and not para.strip().endswith('.'):
-                    doc.add_heading(para.strip(), level=1)
-                else:
-                    doc.add_paragraph(para.strip())
+        if BS4_AVAILABLE:
+            # Use BeautifulSoup for better parsing
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(clean_html, 'html.parser')
+            
+            # Process each element
+            for element in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div']):
+                if element.name in ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+                    # Add heading
+                    level = int(element.name[1])
+                    doc.add_heading(element.get_text().strip(), level)
+                    
+                elif element.name in ['p', 'div']:
+                    # Add paragraph with basic formatting
+                    text = element.get_text().strip()
+                    if text:
+                        paragraph = doc.add_paragraph()
+                        
+                        # Handle bold and italic text
+                        for content in element.contents:
+                            if hasattr(content, 'name'):
+                                if content.name in ['strong', 'b']:
+                                    run = paragraph.add_run(content.get_text())
+                                    run.bold = True
+                                elif content.name in ['em', 'i']:
+                                    run = paragraph.add_run(content.get_text())
+                                    run.italic = True
+                                else:
+                                    paragraph.add_run(content.get_text() if hasattr(content, 'get_text') else str(content))
+                            else:
+                                paragraph.add_run(str(content))
+        else:
+            # Simple parsing without BeautifulSoup
+            import re
+            
+            # Remove HTML tags but try to preserve structure
+            content = clean_html
+            
+            # Split by major elements
+            sections = re.split(r'<h[1-6].*?>(.*?)</h[1-6]>', content)
+            
+            for i, section in enumerate(sections):
+                section = section.strip()
+                if section:
+                    if i % 2 == 1:  # This is a heading
+                        doc.add_heading(re.sub(r'<[^>]+>', '', section), 1)
+                    else:  # This is content
+                        # Split into paragraphs
+                        paragraphs = section.split('\n\n')
+                        for para in paragraphs:
+                            para = re.sub(r'<[^>]+>', '', para).strip()
+                            if para:
+                                doc.add_paragraph(para)
         
         # Save to temporary file
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
         doc.save(temp_file.name)
+        print("✓ DOCX generated successfully")
         return temp_file.name
         
     except Exception as e:
-        print(f"Error generating DOCX: {e}")
+        print(f"Error in DOCX generation: {e}")
         return None
 
+# Update the main conversion functions
+def html_to_docx(html_content, title):
+    """Main DOCX conversion function"""
+    return html_to_docx_improved(html_content, title)
+
 def generate_pdf_from_html(html_content, title):
-    try:
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
-        
-        if html_content.startswith('#') or '**' in html_content:
-            html_content = markdown.markdown(html_content)
-        
-        doc = SimpleDocTemplate(temp_file.name, pagesize=letter)
-        styles = getSampleStyleSheet()
-        story = []
-        
-        title_style = styles['Title']
-        story.append(Paragraph(title, title_style))
-        story.append(Spacer(1, 12))
-        
-        import re
-        clean_text = re.sub('<[^<]+?>', '', html_content)
-        paragraphs = clean_text.split('\n\n')
-        
-        for para in paragraphs:
-            if para.strip():
-                story.append(Paragraph(para.strip(), styles['Normal']))
-                story.append(Spacer(1, 12))
-        
-        doc.build(story)
-        return temp_file.name
-        
-    except Exception as e:
-        print(f"Error generating PDF: {e}")
-        return None
+    """Main PDF conversion function"""  
+    return generate_pdf_from_html_improved(html_content, title)
 
 @app.route('/api/download-docx/<draft_id>')
 def download_docx(draft_id):
@@ -880,6 +1169,8 @@ def payment_page(draft_id):
                          payment_id=payment_id,
                          amount=49)
 
+# Update your verify_payment_new route in app.py
+
 @app.route('/verify-payment-new', methods=['POST'])
 def verify_payment_new():
     try:
@@ -887,6 +1178,12 @@ def verify_payment_new():
         transaction_id = data.get('transaction_id', '').strip()
         payment_id = session.get('payment_id')
         draft_id = session.get('draft_id_for_payment')
+        
+        print(f"Payment verification attempt:")
+        print(f"  Transaction ID: {transaction_id}")
+        print(f"  Payment ID: {payment_id}")
+        print(f"  Draft ID: {draft_id}")
+        print(f"  Current session: {dict(session)}")
         
         if not transaction_id:
             return jsonify({
@@ -906,8 +1203,13 @@ def verify_payment_new():
                 'message': 'Invalid transaction ID. Please check and try again.'
             })
         
+        # Set session variables for download routes
         session['payment_status'] = 'completed'
         session['transaction_id'] = transaction_id
+        session['payment_verified'] = True  # For backward compatibility
+        session['draft_id'] = draft_id      # For backward compatibility
+        
+        print(f"Payment verified successfully. Updated session: {dict(session)}")
         
         return jsonify({
             'success': True, 
@@ -922,14 +1224,29 @@ def verify_payment_new():
             'message': 'Payment verification failed. Please try again.'
         })
 
+# Update these download routes in your app.py
+
 @app.route('/download-docx-new/<draft_id>')
 def download_docx_new(draft_id):
     try:
         if not DOCX_AVAILABLE:
             return jsonify({'error': 'DOCX functionality not available. Please install python-docx.'}), 500
-            
-        if (session.get('payment_status') != 'completed' or 
-            session.get('draft_id_for_payment') != draft_id):
+        
+        # Check both session structures
+        payment_completed = (
+            session.get('payment_status') == 'completed' and 
+            session.get('draft_id_for_payment') == draft_id
+        ) or (
+            session.get('payment_verified', False) and 
+            session.get('draft_id') == draft_id
+        )
+        
+        print(f"DOCX Download attempt - Draft ID: {draft_id}")
+        print(f"Session data: {dict(session)}")
+        print(f"Payment completed: {payment_completed}")
+        
+        if not payment_completed:
+            print("Payment not verified, redirecting to payment page")
             return redirect(url_for('payment_page', draft_id=draft_id))
         
         project = storage.get_project(draft_id)
@@ -940,14 +1257,22 @@ def download_docx_new(draft_id):
         if not content:
             return jsonify({'error': 'No content to download. Please generate content first.'}), 400
         
-        docx_path = html_to_docx(content, project.title)
+        print(f"Original content length: {len(content)} characters")
+        print(f"Content preview: {content[:200]}...")
+        
+        # CLEAN CONTENT before creating DOCX
+        cleaned_content = clean_and_prepare_html(content)
+        print(f"Cleaned content length: {len(cleaned_content)} characters")
+        print(f"Cleaned content preview: {cleaned_content[:200]}...")
+        
+        docx_path = html_to_docx(cleaned_content, project.title)
         if not docx_path:
             return jsonify({'error': 'Failed to generate DOCX'}), 500
         
-        session.pop('payment_status', None)
-        session.pop('payment_id', None)
-        session.pop('draft_id_for_payment', None)
-        session.pop('transaction_id', None)
+        print("DOCX generated successfully, starting download")
+        
+        # DON'T clear session yet - keep it for other downloads
+        # We'll clear it in a separate cleanup route or let it expire
         
         return send_file(
             docx_path,
@@ -960,11 +1285,79 @@ def download_docx_new(draft_id):
         print(f"DOCX download error: {e}")
         return jsonify({'error': 'Download failed. Please try again.'}), 500
 
-@app.route('/help')
-def help_page():
-    return render_template('help.html')
+@app.route('/download-pdf-new/<draft_id>')
+def download_pdf_new(draft_id):
+    try:
+        # Check both session structures
+        payment_completed = (
+            session.get('payment_status') == 'completed' and 
+            session.get('draft_id_for_payment') == draft_id
+        ) or (
+            session.get('payment_verified', False) and 
+            session.get('draft_id') == draft_id
+        )
+        
+        print(f"PDF Download attempt - Draft ID: {draft_id}")
+        print(f"Session data: {dict(session)}")
+        print(f"Payment completed: {payment_completed}")
+        
+        if not payment_completed:
+            print("Payment not verified, redirecting to payment page")
+            return redirect(url_for('payment_page', draft_id=draft_id))
+        
+        project = storage.get_project(draft_id)
+        if not project:
+            return jsonify({'error': 'Project not found'}), 404
+        
+        content = project.generated_content
+        if not content:
+            return jsonify({'error': 'No content to download. Please generate content first.'}), 400
+        
+        print(f"Original content length: {len(content)} characters")
+        print(f"Content preview: {content[:200]}...")
+        
+        # CLEAN CONTENT before creating PDF
+        cleaned_content = clean_and_prepare_html(content)
+        print(f"Cleaned content length: {len(cleaned_content)} characters")
+        print(f"Cleaned content preview: {cleaned_content[:200]}...")
+        
+        pdf_path = generate_pdf_from_html(cleaned_content, project.title)
+        if not pdf_path:
+            return jsonify({'error': 'Failed to generate PDF'}), 500
+        
+        print("PDF generated successfully, starting download")
+        
+        # DON'T clear session yet - keep it for other downloads
+        
+        return send_file(
+            pdf_path,
+            as_attachment=True,
+            download_name=f"{project.title}.pdf",
+            mimetype='application/pdf'
+        )
+        
+    except Exception as e:
+        print(f"PDF download error: {e}")
+        return jsonify({'error': 'Download failed. Please try again.'}), 500
 
-# Additional routes for enhanced functionality
+# Add a route to clear payment session after both downloads are done
+@app.route('/clear-payment-session/<draft_id>')
+def clear_payment_session(draft_id):
+    """Clear payment session after downloads are complete"""
+    try:
+        if session.get('draft_id_for_payment') == draft_id or session.get('draft_id') == draft_id:
+            session.pop('payment_status', None)
+            session.pop('payment_id', None)
+            session.pop('draft_id_for_payment', None)
+            session.pop('transaction_id', None)
+            session.pop('payment_verified', None)
+            session.pop('draft_id', None)
+            print("Payment session cleared")
+        
+        return jsonify({'success': True, 'message': 'Session cleared'})
+    except Exception as e:
+        print(f"Error clearing session: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/project-insights/<project_id>')
 def api_project_insights(project_id):

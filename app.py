@@ -16,7 +16,7 @@ import tempfile
 import time
 import hashlib
 import random
-from email_utils import send_verification_email, send_welcome_email
+from email_utils import send_verification_email, send_welcome_email, send_email_async
 from storage import create_user_with_verification, verify_user_email, resend_verification_email, authenticate_user_with_verification
 from flask import request, url_for
 try:

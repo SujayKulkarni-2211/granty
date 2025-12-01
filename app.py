@@ -1415,6 +1415,10 @@ def api_project_insights(project_id):
         print(f"Error getting project insights: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/health')
+def health_check():
+    return jsonify({'status': 'healthy'}), 200
+    
 # Enhanced error handling
 @app.errorhandler(500)
 def internal_error(error):

@@ -1,23 +1,23 @@
-# email_utils.py
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+# email_utils.py - RESEND API VERSION (WORKS ON RENDER)
+import os
 import secrets
 from datetime import datetime, timedelta
-from flask import url_for
-import os
-import socket
 from threading import Thread
 import logging
 
-# Prevent email timeouts
-socket.setdefaulttimeout(10)
+# Use Resend API instead of SMTP
+import resend
 
-SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
-SMTP_PORT = int(os.getenv('SMTP_PORT', '465'))
-EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
-EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
-USE_SSL = os.getenv('USE_SSL', 'true').lower() == 'true'
+# Configure Resend
+RESEND_API_KEY = os.getenv('RESEND_API_KEY')
+RESEND_FROM_EMAIL = os.getenv('RESEND_FROM_EMAIL', 'onboarding@resend.dev')
+REPLY_TO_EMAIL = os.getenv('EMAIL_ADDRESS', 'mailbot.granty@gmail.com')
+
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+    print(f"✓ Resend configured with from: {RESEND_FROM_EMAIL}, reply-to: {REPLY_TO_EMAIL}")
+else:
+    print("⚠️ RESEND_API_KEY not configured")
 
 def generate_verification_token():
     """Generate a secure verification token"""
@@ -41,19 +41,13 @@ def send_email_async(send_function, *args, **kwargs):
     logging.info("Email queued for sending in background")
 
 def send_verification_email(user_email, user_name, verification_token, app_url):
-    """Send verification email to user"""
+    """Send verification email to user via Resend API"""
     try:
-        # Check if email is configured
-        if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
-            print("Email not configured - skipping email send")
+        # Check if Resend is configured
+        if not RESEND_API_KEY:
+            print("Resend API not configured - skipping email send")
             return False
             
-        # Create message
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = 'Verify Your Granty Account'
-        msg['From'] = EMAIL_ADDRESS
-        msg['To'] = user_email
-
         # Verification URL
         verification_url = f"{app_url}/verify-email/{verification_token}"
 
@@ -125,49 +119,35 @@ If you didn't create an account, please ignore this email.
 Best regards,
 The Granty Team"""
 
-        # Attach parts
-        part1 = MIMEText(text_content, 'plain')
-        part2 = MIMEText(html_content, 'html')
+        # Send via Resend API
+        params = {
+            "from": RESEND_FROM_EMAIL,
+            "to": [user_email],
+            "subject": "Verify Your Granty Account",
+            "html": html_content,
+            "text": text_content,
+            "reply_to": REPLY_TO_EMAIL
+        }
         
-        msg.attach(part1)
-        msg.attach(part2)
-
-        # Send email with SSL (port 465) or TLS (port 587)
-        if USE_SSL:
-            print(f"Connecting via SSL to {SMTP_SERVER}:{SMTP_PORT}")
-            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10)
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        else:
-            print(f"Connecting via TLS to {SMTP_SERVER}:{SMTP_PORT}")
-            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        print(f"Sending verification email via Resend to {user_email}")
+        email = resend.Emails.send(params)
         
-        text = msg.as_string()
-        server.sendmail(EMAIL_ADDRESS, user_email, text)
-        server.quit()
-        
-        print(f"Verification email sent to {user_email}")
+        print(f"✓ Verification email sent to {user_email} via Resend (ID: {email.get('id')})")
         return True
         
     except Exception as e:
-        print(f"Error sending verification email: {e}")
+        print(f"❌ Error sending verification email via Resend: {e}")
         import traceback
         traceback.print_exc()
         return False
 
 def send_welcome_email(user_email, user_name):
-    """Send welcome email after successful verification"""
+    """Send welcome email after successful verification via Resend API"""
     try:
-        # Check if email is configured
-        if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
-            print("Email not configured - skipping email send")
+        # Check if Resend is configured
+        if not RESEND_API_KEY:
+            print("Resend API not configured - skipping email send")
             return False
-            
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = 'Welcome to Granty - Your Account is Verified!'
-        msg['From'] = EMAIL_ADDRESS
-        msg['To'] = user_email
 
         html_content = f"""<!DOCTYPE html>
 <html>
@@ -239,30 +219,24 @@ Thank you for choosing Granty!
 Best regards,
 The Granty Team"""
 
-        part1 = MIMEText(text_content, 'plain')
-        part2 = MIMEText(html_content, 'html')
+        # Send via Resend API
+        params = {
+            "from": RESEND_FROM_EMAIL,
+            "to": [user_email],
+            "subject": "Welcome to Granty - Your Account is Verified!",
+            "html": html_content,
+            "text": text_content,
+            "reply_to": REPLY_TO_EMAIL
+        }
         
-        msg.attach(part1)
-        msg.attach(part2)
-
-        # Send email with SSL (port 465) or TLS (port 587)
-        if USE_SSL:
-            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10)
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        else:
-            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        print(f"Sending welcome email via Resend to {user_email}")
+        email = resend.Emails.send(params)
         
-        text = msg.as_string()
-        server.sendmail(EMAIL_ADDRESS, user_email, text)
-        server.quit()
-        
-        print(f"Welcome email sent to {user_email}")
+        print(f"✓ Welcome email sent to {user_email} via Resend (ID: {email.get('id')})")
         return True
         
     except Exception as e:
-        print(f"Error sending welcome email: {e}")
+        print(f"❌ Error sending welcome email via Resend: {e}")
         import traceback
         traceback.print_exc()
         return False

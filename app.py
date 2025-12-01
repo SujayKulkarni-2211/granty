@@ -210,9 +210,9 @@ def register():
         
         user = create_user_with_verification(email, password, name)
         if user:
-            # Send verification email
+            # Send verification email - use the token from the user object!
             app_url = request.url_root.rstrip('/')
-            token = secrets.token_urlsafe(32)
+            token = user.email_verification_token  # ✅ Use the actual token
             if send_email_async(send_verification_email, email, name, token, app_url):
                 flash('Account created successfully! Please check your email to verify your account.', 'success')
                 return redirect(url_for('verification_sent', email=email))
@@ -249,8 +249,8 @@ def verify_email(token):
     user, message = verify_user_email(token)
     
     if user:
-        # Send welcome email
-        send_email_async(send_welcome_email, email, name)
+        # Send welcome email - get email and name from user object
+        send_email_async(send_welcome_email, user.email, user.name)
         
         # Auto-login the user
         login_user(user)
@@ -274,9 +274,14 @@ def resend_verification():
         flash('Email already verified.', 'info')
         return redirect(url_for('login'))
     
+    # Regenerate token
     user, message = resend_verification_email(user.id)
     if user:
         app_url = request.url_root.rstrip('/')
+        # Get name and token from user object
+        name = user.name
+        token = user.email_verification_token
+        
         if send_email_async(send_verification_email, email, name, token, app_url):
             flash('Verification email sent successfully! Please check your inbox.', 'success')
         else:

@@ -211,7 +211,7 @@ def register():
         if user:
             # Send verification email
             app_url = request.url_root.rstrip('/')
-            if send_verification_email(user.email, user.name, user.email_verification_token, app_url):
+            if send_email_async(send_verification_email, email, name, token, app_url):
                 flash('Account created successfully! Please check your email to verify your account.', 'success')
                 return redirect(url_for('verification_sent', email=email))
             else:
@@ -248,7 +248,7 @@ def verify_email(token):
     
     if user:
         # Send welcome email
-        send_welcome_email(user.email, user.name)
+        send_email_async(send_welcome_email, email, name)
         
         # Auto-login the user
         login_user(user)
@@ -275,7 +275,7 @@ def resend_verification():
     user, message = resend_verification_email(user.id)
     if user:
         app_url = request.url_root.rstrip('/')
-        if send_verification_email(user.email, user.name, user.email_verification_token, app_url):
+        if send_email_async(send_verification_email, email, name, token, app_url):
             flash('Verification email sent successfully! Please check your inbox.', 'success')
         else:
             flash('Failed to send verification email. Please try again.', 'error')

@@ -13,10 +13,11 @@ import logging
 # Prevent email timeouts
 socket.setdefaulttimeout(10)
 
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
+SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.getenv('SMTP_PORT', '465'))
 EMAIL_ADDRESS = os.getenv('EMAIL_ADDRESS')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+USE_SSL = os.getenv('USE_SSL', 'true').lower() == 'true'
 
 def generate_verification_token():
     """Generate a secure verification token"""
@@ -131,10 +132,17 @@ The Granty Team"""
         msg.attach(part1)
         msg.attach(part2)
 
-        # Send email with timeout
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-        server.starttls()
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        # Send email with SSL (port 465) or TLS (port 587)
+        if USE_SSL:
+            print(f"Connecting via SSL to {SMTP_SERVER}:{SMTP_PORT}")
+            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10)
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        else:
+            print(f"Connecting via TLS to {SMTP_SERVER}:{SMTP_PORT}")
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        
         text = msg.as_string()
         server.sendmail(EMAIL_ADDRESS, user_email, text)
         server.quit()
@@ -144,6 +152,8 @@ The Granty Team"""
         
     except Exception as e:
         print(f"Error sending verification email: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def send_welcome_email(user_email, user_name):
@@ -235,9 +245,15 @@ The Granty Team"""
         msg.attach(part1)
         msg.attach(part2)
 
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
-        server.starttls()
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        # Send email with SSL (port 465) or TLS (port 587)
+        if USE_SSL:
+            server = smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10)
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        else:
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10)
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        
         text = msg.as_string()
         server.sendmail(EMAIL_ADDRESS, user_email, text)
         server.quit()
@@ -247,4 +263,6 @@ The Granty Team"""
         
     except Exception as e:
         print(f"Error sending welcome email: {e}")
+        import traceback
+        traceback.print_exc()
         return False

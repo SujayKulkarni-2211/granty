@@ -211,6 +211,7 @@ def register():
         if user:
             # Send verification email
             app_url = request.url_root.rstrip('/')
+            token = secrets.token_urlsafe(32)
             if send_email_async(send_verification_email, email, name, token, app_url):
                 flash('Account created successfully! Please check your email to verify your account.', 'success')
                 return redirect(url_for('verification_sent', email=email))
